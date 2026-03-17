@@ -21,6 +21,12 @@ export default function Dashboard() {
   const [editId, setEditId] = useState(null)
   const [filterCat, setFilterCat] = useState('all')
 
+  // Import URL state
+  const [importUrl, setImportUrl] = useState('')
+  const [importing, setImporting] = useState(false)
+  const [importError, setImportError] = useState('')
+  const [importMode, setImportMode] = useState('manual') // 'manual' | 'url'
+
   const handleLogin = async (e) => {
     e.preventDefault()
     const res = await fetch('/api/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) })
@@ -53,6 +59,33 @@ export default function Dashboard() {
       setTimeout(() => setSaved(false), 2000)
       fetchKnowledge()
     } catch (e) { console.error(e) } finally { setSaving(false) }
+  }
+
+  const handleImportUrl = async () => {
+    if (!importUrl.trim()) return
+    setImporting(true)
+    setImportError('')
+    try {
+      const res = await fetch('/api/import-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: importUrl }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal mengambil konten')
+      // Isi form dengan hasil extract
+      setForm(f => ({
+        ...f,
+        title: data.title || '',
+        content: data.content || '',
+      }))
+      setImportUrl('')
+      setImportMode('manual')
+    } catch (e) {
+      setImportError(e.message)
+    } finally {
+      setImporting(false)
+    }
   }
 
   const handleEdit = (item) => {
@@ -111,7 +144,39 @@ export default function Dashboard() {
         </header>
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
           <div className="bg-asphalt-800 border border-asphalt-600 rounded-2xl p-5 space-y-4">
-            <h2 className="font-display font-600 text-sm text-gray-200">{editId ? '✏️ Edit Data' : '➕ Tambah Data Baru'}</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-display font-600 text-sm text-gray-200">{editId ? '✏️ Edit Data' : '➕ Tambah Data Baru'}</h2>
+              {/* Toggle manual / import URL */}
+              <div className="flex gap-1 bg-asphalt-700 rounded-lg p-1">
+                <button onClick={() => setImportMode('manual')} className={`text-xs px-3 py-1 rounded-md transition-all font-mono ${importMode === 'manual' ? 'bg-asphalt-500 text-gray-200' : 'text-gray-500 hover:text-gray-300'}`}>✏️ Manual</button>
+                <button onClick={() => setImportMode('url')} className={`text-xs px-3 py-1 rounded-md transition-all font-mono ${importMode === 'url' ? 'bg-asphalt-500 text-gray-200' : 'text-gray-500 hover:text-gray-300'}`}>🔗 Import URL</button>
+              </div>
+            </div>
+
+            {/* Import URL mode */}
+            {importMode === 'url' && (
+              <div className="space-y-3">
+                <p className="text-xs text-gray-500 font-mono">Paste link berita/artikel — konten akan otomatis diekstrak ke form.</p>
+                <div className="flex gap-2">
+                  <input
+                    value={importUrl}
+                    onChange={e => setImportUrl(e.target.value)}
+                    placeholder="https://example.com/berita-lalu-lintas..."
+                    className="flex-1 bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600"
+                  />
+                  <button
+                    onClick={handleImportUrl}
+                    disabled={importing || !importUrl.trim()}
+                    className="flex-shrink-0 bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono transition-all disabled:opacity-40"
+                  >
+                    {importing ? '⏳' : '→ Ambil'}
+                  </button>
+                </div>
+                {importError && <p className="text-xs text-signal-red font-mono">⚠️ {importError}</p>}
+              </div>
+            )}
+
+            {/* Kategori, Judul, Konten */}
             <div>
               <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Kategori</label>
               <div className="grid grid-cols-2 gap-2">
@@ -128,7 +193,7 @@ export default function Dashboard() {
             </div>
             <div>
               <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Informasi</label>
-              <textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} placeholder="Tuliskan informasi detail. Contoh: Jalan Yosonegoro sering macet pukul 07.00-08.30 karena ada SDN 1 Limboto di dekat persimpangan. Alternatif: lewat Jl. Mangga." rows={4} className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors resize-none placeholder-gray-600 font-body leading-relaxed" />
+              <textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} placeholder="Tuliskan informasi detail..." rows={4} className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors resize-none placeholder-gray-600 font-body leading-relaxed" />
             </div>
             <div className="flex gap-2">
               <button onClick={handleSave} disabled={saving || saved || !form.title.trim() || !form.content.trim()} className={`flex-1 rounded-xl py-3 text-sm font-display font-600 transition-all ${saved ? 'bg-signal-green/20 border border-signal-green/30 text-signal-green' : 'bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 disabled:opacity-40'}`}>
@@ -137,6 +202,8 @@ export default function Dashboard() {
               {editId && <button onClick={() => { setEditId(null); setForm({ category: 'kondisi_jalan', title: '', content: '' }) }} className="px-4 rounded-xl border border-asphalt-600 text-gray-500 hover:text-gray-300 text-sm transition-all">Batal</button>}
             </div>
           </div>
+
+          {/* List knowledge */}
           <div>
             <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
               <button onClick={() => setFilterCat('all')} className={`flex-shrink-0 text-xs rounded-full px-3 py-1.5 border font-mono transition-all ${filterCat === 'all' ? 'bg-asphalt-600 border-asphalt-500 text-gray-200' : 'bg-asphalt-800 border-asphalt-600 text-gray-500'}`}>Semua ({knowledge.length})</button>

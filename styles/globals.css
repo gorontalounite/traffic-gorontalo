@@ -127,3 +127,31 @@ html, body {
   height: 2px;
   width: 100%;
 }
+
+/* Light mode */
+html.light {
+  --asphalt-900: #f0f2f5;
+  --asphalt-800: #ffffff;
+  --asphalt-700: #e8eaed;
+  --asphalt-600: #d1d5db;
+}
+
+html.light body {
+  background: #f0f2f5;
+  color: #111827;
+}
+
+html.light .bg-asphalt-900 { background-color: #f0f2f5; }
+html.light .bg-asphalt-800 { background-color: #ffffff; }
+html.light .bg-asphalt-700 { background-color: #e8eaed; }
+html.light .bg-asphalt-600 { background-color: #d1d5db; }
+html.light .border-asphalt-600 { border-color: #d1d5db; }
+html.light .border-asphalt-700 { border-color: #e8eaed; }
+html.light .text-gray-100 { color: #111827; }
+html.light .text-gray-200 { color: #1f2937; }
+html.light .text-gray-300 { color: #374151; }
+html.light .text-gray-400 { color: #4b5563; }
+html.light .text-gray-500 { color: #6b7280; }
+html.light .text-gray-600 { color: #9ca3af; }
+html.light .text-gray-700 { color: #d1d5db; }
+html.light .text-gray-800 { color: #e5e7eb; }

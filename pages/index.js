@@ -6,6 +6,7 @@ import StatusBar from '../components/StatusBar'
 import ChatPanel from '../components/ChatPanel'
 import MapView from '../components/MapView'
 import ReportForm from '../components/ReportForm'
+import ThemeToggle from '../components/ThemeToggle'
 import ReportHistory from '../components/ReportHistory'
 
 export default function Home() {
@@ -94,6 +95,7 @@ export default function Home() {
             </div>
 
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <div className="flex items-center gap-1.5 bg-asphalt-800 border border-asphalt-600 rounded-full px-2.5 py-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-signal-green pulse-green" />
                 <span className="text-xs font-mono text-gray-400">

@@ -19,40 +19,42 @@ export default async function handler(req, res) {
   const { message, context } = req.body
   if (!message) return res.status(400).json({ error: 'Message is required' })
 
-  const apiKey = process.env.GEMINI_API_KEY
-
-  if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
-    return res.status(200).json({ reply: getFallbackResponse(message), fallback: true })
-  }
+  const apiKey = process.env.GROQ_API_KEY
+  if (!apiKey) return res.status(200).json({ reply: getFallbackResponse(message), fallback: true })
 
   const knowledge = await fetchKnowledge()
 
-  try {
-    const systemPrompt = `Kamu adalah asisten pemantauan lalu lintas untuk Kabupaten Gorontalo, area Kampung Jawa dan sekitarnya, mencakup 6 kecamatan: Limboto, Limboto Barat, Tibawa, Bongomeme, Dungaliyo, dan Pulubala.
-    ${knowledge ? `KNOWLEDGE BASE:\n${knowledge}\n\n` : ''}${context ? `LAPORAN LAPANGAN TERKINI:\n${context}\n\n` : ''}PANDUAN: Jawab seperti orang asli Gorontalo yang ramah dan santai — pakai bahasa sehari-hari, boleh campur sedikit logat lokal. Singkat dan to the point (2-3 kalimat), jangan bertele-tele. Kalau ada info dari Knowledge Base, sampaikan dengan natural seolah kamu tahu sendiri. Gunakan emoji 🟢🟡🔴🚗 secukupnya, jangan berlebihan.`
+  const systemPrompt = `Kamu adalah asisten pemantauan lalu lintas untuk Kabupaten Gorontalo, area Kampung Jawa dan sekitarnya, mencakup 6 kecamatan: Limboto, Limboto Barat, Tibawa, Bongomeme, Dungaliyo, dan Pulubala.
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: systemPrompt }] },
-          contents: [{ role: 'user', parts: [{ text: message }] }],
-          generationConfig: { maxOutputTokens: 500, temperature: 0.7 },
-        }),
-      }
-    )
+${knowledge ? `KNOWLEDGE BASE:\n${knowledge}\n\n` : ''}${context ? `LAPORAN LAPANGAN TERKINI:\n${context}\n\n` : ''}PANDUAN: Jawab seperti orang Gorontalo yang ramah dan santai, bahasa sehari-hari, singkat 2-3 kalimat. Kalau ada info dari Knowledge Base, sampaikan dengan natural. Gunakan emoji 🟢🟡🔴🚗 secukupnya.`
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        max_tokens: 300,
+        temperature: 0.7,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: message },
+        ],
+      }),
+    })
 
     const data = await response.json()
-    if (!response.ok) throw new Error(data.error?.message || 'Gemini API error')
+    if (!response.ok) throw new Error(data.error?.message || 'Groq API error')
 
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
-    if (!reply) throw new Error('Empty response from Gemini')
+    const reply = data.choices?.[0]?.message?.content
+    if (!reply) throw new Error('Empty response')
 
     return res.status(200).json({ reply, fallback: false })
   } catch (error) {
-    console.error('Chat API error:', error.message)
+    console.error('Chat error:', error.message)
     return res.status(200).json({ reply: getFallbackResponse(message), fallback: true })
   }
 }

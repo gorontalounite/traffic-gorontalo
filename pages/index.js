@@ -14,12 +14,8 @@ export default function Home() {
   const [selectedKec, setSelectedKec] = useState(null)
   const [localReports, setLocalReports] = useState([])
 
-  const isConfigured =
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL_HERE'
-
   const fetchReports = async () => {
-    if (!isConfigured) {
+    if (!supabase) {
       setLoadingReports(false)
       return
     }
@@ -40,9 +36,8 @@ export default function Home() {
   useEffect(() => {
     fetchReports()
 
-    if (!isConfigured) return
+    if (!supabase) return
 
-    // Real-time subscription
     const channel = supabase
       .channel('laporan-realtime')
       .on(
@@ -58,7 +53,7 @@ export default function Home() {
   }, [])
 
   const handleReportSubmitted = (report) => {
-    if (!isConfigured) {
+    if (!supabase) {
       const demoReport = {
         ...report,
         id: Date.now().toString(),
@@ -70,9 +65,7 @@ export default function Home() {
     }
   }
 
-  const allReports = isConfigured
-    ? reports
-    : [...localReports, ...reports]
+  const allReports = [...localReports, ...reports]
 
   return (
     <>
@@ -81,7 +74,6 @@ export default function Home() {
       </Head>
 
       <div className="min-h-screen bg-asphalt-900">
-        {/* Header */}
         <header className="sticky top-0 z-50 bg-asphalt-900/95 backdrop-blur border-b border-asphalt-700">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-2.5">
@@ -111,34 +103,21 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Road divider */}
           <div className="road-divider" />
         </header>
 
         <main className="max-w-lg mx-auto pt-4">
-          {/* Alert banner for macet areas */}
           <AlertBanner reports={allReports} />
-
-          {/* Status per kecamatan */}
           <StatusBar reports={allReports} />
-
-          {/* Chat AI */}
           <ChatPanel reports={allReports} />
-
-          {/* Map */}
           <MapView
             reports={allReports}
             selectedKec={selectedKec}
             onSelectKec={setSelectedKec}
           />
-
-          {/* Report form */}
           <ReportForm onReportSubmitted={handleReportSubmitted} />
-
-          {/* Report history */}
           <ReportHistory reports={allReports} loading={loadingReports} />
 
-          {/* Footer */}
           <footer className="px-4 pb-8 text-center">
             <div className="road-divider mb-4" />
             <p className="text-xs text-gray-700 font-mono">

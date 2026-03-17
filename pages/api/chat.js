@@ -5,13 +5,51 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const isSupabaseConfigured = supabaseUrl && supabaseUrl.startsWith('http') && supabaseAnonKey && supabaseAnonKey.length > 10
 const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey) : null
 
-async function fetchKnowledge() {
+async function fetchKnowledge(question) {
   if (!supabase) return ''
   try {
-    const { data } = await supabase.from('rag_knowledge').select('category, title, content').order('created_at', { ascending: false }).limit(20)
-    if (!data || data.length === 0) return ''
-    return data.map(k => `[${k.title}]: ${k.content}`).join('\n\n')
-  } catch (e) { return '' }
+    const stopWords = ['apa','siapa','berapa','bagaimana','dimana','kapan','kenapa','yang','di','ke','dari','dan','atau','ini','itu','ada','untuk','dengan','adalah','pada','juga','sudah','akan','bisa','kami','kita','saya','mereka','nya']
+    const keywords = question.toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .split(' ')
+      .filter(w => w.length > 3 && !stopWords.includes(w))
+      .slice(0, 5)
+
+    if (keywords.length === 0) {
+      const { data } = await supabase
+        .from('rag_knowledge')
+        .select('judul, konten')
+        .eq('aktif', true)
+        .order('created_at', { ascending: false })
+        .limit(10)
+      return data?.map(k => `[${k.judul}]: ${k.konten}`).join('\n\n') || ''
+    }
+
+    // Full-text search di kolom konten
+    const searchQuery = keywords.join(' | ')
+    const { data } = await supabase
+      .from('rag_knowledge')
+      .select('judul, konten')
+      .eq('aktif', true)
+      .textSearch('konten', searchQuery, { type: 'websearch', config: 'indonesian' })
+      .limit(10)
+
+    // Fallback ke ILIKE kalau full-text search kosong
+    if (!data || data.length === 0) {
+      const likePromises = keywords.slice(0, 3).map(kw =>
+        supabase.from('rag_knowledge').select('judul, konten').eq('aktif', true).ilike('konten', `%${kw}%`).limit(5)
+      )
+      const results = await Promise.all(likePromises)
+      const combined = results.flatMap(r => r.data || [])
+      const unique = Array.from(new Map(combined.map(k => [k.judul, k])).values()).slice(0, 10)
+      return unique.map(k => `[${k.judul}]: ${k.konten}`).join('\n\n') || ''
+    }
+
+    return data.map(k => `[${k.judul}]: ${k.konten}`).join('\n\n')
+  } catch (e) {
+    console.error('fetchKnowledge error:', e)
+    return ''
+  }
 }
 
 export default async function handler(req, res) {
@@ -22,11 +60,15 @@ export default async function handler(req, res) {
   const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) return res.status(200).json({ reply: getFallbackResponse(message), fallback: true })
 
-  const knowledge = await fetchKnowledge()
+  const knowledge = await fetchKnowledge(message)
 
-  const systemPrompt = `Kamu adalah asisten pemantauan lalu lintas untuk Kabupaten Gorontalo, area Kampung Jawa dan sekitarnya, mencakup 6 kecamatan: Limboto, Limboto Barat, Tibawa, Bongomeme, Dungaliyo, dan Pulubala.
+  const systemPrompt = `Kamu adalah asisten informasi untuk Kabupaten Gorontalo, fokus pada lalu lintas dan info daerah, mencakup 6 kecamatan: Limboto, Limboto Barat, Tibawa, Bongomeme, Dungaliyo, dan Pulubala.
 
-${knowledge ? `KNOWLEDGE BASE:\n${knowledge}\n\n` : ''}${context ? `LAPORAN LAPANGAN TERKINI:\n${context}\n\n` : ''}PANDUAN: Jawab seperti orang Gorontalo yang ramah dan santai, bahasa sehari-hari, singkat 2-3 kalimat. Kalau ada info dari Knowledge Base, sampaikan dengan natural. Gunakan emoji 🟢🟡🔴🚗 secukupnya.`
+${knowledge ? `KNOWLEDGE BASE (gunakan info ini untuk menjawab):\n${knowledge}\n\n` : ''}${context ? `LAPORAN LAPANGAN TERKINI:\n${context}\n\n` : ''}ATURAN PENTING:
+- Kalau jawabannya ADA di Knowledge Base, jawab berdasarkan itu dengan bahasa santai dan ramah.
+- Kalau jawabannya TIDAK ADA di Knowledge Base, jawab jujur: "Maaf, saya tidak punya info soal itu saat ini." — JANGAN mengarang atau mengira-ngira.
+- Gunakan emoji 🟢🟡🔴🚗 secukupnya.
+- Jawab singkat 2-3 kalimat, bahasa Indonesia sehari-hari.`
 
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -38,7 +80,7 @@ ${knowledge ? `KNOWLEDGE BASE:\n${knowledge}\n\n` : ''}${context ? `LAPORAN LAPA
       body: JSON.stringify({
         model: 'llama-3.1-8b-instant',
         max_tokens: 300,
-        temperature: 0.7,
+        temperature: 0.5,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: message },

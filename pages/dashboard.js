@@ -21,13 +21,11 @@ export default function Dashboard() {
   const [editId, setEditId] = useState(null)
   const [filterCat, setFilterCat] = useState('all')
 
-  // Import URL state
   const [importUrl, setImportUrl] = useState('')
   const [importing, setImporting] = useState(false)
   const [importError, setImportError] = useState('')
-  const [importMode, setImportMode] = useState('manual') // 'manual' | 'url' | 'bulk'
+  const [importMode, setImportMode] = useState('manual')
 
-  // Bulk import state
   const [bulkUrls, setBulkUrls] = useState('')
   const [bulkResults, setBulkResults] = useState([])
   const [bulkLoading, setBulkLoading] = useState(false)
@@ -55,10 +53,19 @@ export default function Dashboard() {
     setSaving(true)
     try {
       if (editId) {
-        await supabase.from('rag_knowledge').update({ category: form.category, title: form.title, content: form.content }).eq('id', editId)
+        await supabase.from('rag_knowledge').update({
+          kategori: form.category,
+          judul: form.title,
+          konten: form.content,
+        }).eq('id', editId)
         setEditId(null)
       } else {
-        await supabase.from('rag_knowledge').insert([{ category: form.category, title: form.title, content: form.content }])
+        await supabase.from('rag_knowledge').insert([{
+          kategori: form.category,
+          judul: form.title,
+          konten: form.content,
+          aktif: true,
+        }])
       }
       setForm({ category: 'kondisi_jalan', title: '', content: '' })
       setSaved(true)
@@ -115,14 +122,15 @@ export default function Dashboard() {
       setBulkResults([...allResults])
     }
 
-    // Auto-simpan yang berhasil ke Supabase
+    // ✅ Nama kolom sudah benar
     const successful = allResults.filter(r => r.status === 'ok')
     if (successful.length > 0 && supabase) {
       await supabase.from('rag_knowledge').insert(
         successful.map(r => ({
-          category: 'pengumuman',
-          title: r.title,
-          content: r.content,
+          kategori: 'Pengumuman',
+          judul: r.title,
+          konten: r.content,
+          aktif: true,
         }))
       )
       fetchKnowledge()
@@ -131,7 +139,8 @@ export default function Dashboard() {
   }
 
   const handleEdit = (item) => {
-    setForm({ category: item.category, title: item.title, content: item.content })
+    // ✅ Pakai nama kolom Supabase yang benar
+    setForm({ category: item.kategori, title: item.judul, content: item.konten })
     setEditId(item.id)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -142,7 +151,8 @@ export default function Dashboard() {
     fetchKnowledge()
   }
 
-  const filtered = knowledge.filter(k => filterCat === 'all' || k.category === filterCat)
+  // ✅ Filter pakai kolom kategori yang benar
+  const filtered = knowledge.filter(k => filterCat === 'all' || k.kategori === filterCat)
 
   if (!authed) {
     return (
@@ -187,7 +197,6 @@ export default function Dashboard() {
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
           <div className="bg-asphalt-800 border border-asphalt-600 rounded-2xl p-5 space-y-4">
 
-            {/* Header + Toggle */}
             <div className="flex items-center justify-between flex-wrap gap-2">
               <h2 className="font-display font-600 text-sm text-gray-200">
                 {editId ? '✏️ Edit Data' : '➕ Tambah Data Baru'}
@@ -199,22 +208,12 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Mode: Import URL */}
             {importMode === 'url' && (
               <div className="space-y-3">
                 <p className="text-xs text-gray-500 font-mono">Paste link berita/artikel — konten akan otomatis diekstrak ke form.</p>
                 <div className="flex gap-2">
-                  <input
-                    value={importUrl}
-                    onChange={e => setImportUrl(e.target.value)}
-                    placeholder="https://example.com/berita-lalu-lintas..."
-                    className="flex-1 bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600"
-                  />
-                  <button
-                    onClick={handleImportUrl}
-                    disabled={importing || !importUrl.trim()}
-                    className="flex-shrink-0 bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono transition-all disabled:opacity-40"
-                  >
+                  <input value={importUrl} onChange={e => setImportUrl(e.target.value)} placeholder="https://example.com/berita-lalu-lintas..." className="flex-1 bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600" />
+                  <button onClick={handleImportUrl} disabled={importing || !importUrl.trim()} className="flex-shrink-0 bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono transition-all disabled:opacity-40">
                     {importing ? '⏳' : '→ Ambil'}
                   </button>
                 </div>
@@ -222,22 +221,11 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* Mode: Bulk Import */}
             {importMode === 'bulk' && (
               <div className="space-y-3">
                 <p className="text-xs text-gray-500 font-mono">Paste banyak URL sekaligus (1 URL per baris) — otomatis disimpan ke Knowledge Base kategori Pengumuman.</p>
-                <textarea
-                  value={bulkUrls}
-                  onChange={e => setBulkUrls(e.target.value)}
-                  placeholder={"https://berita.gorontaloprov.go.id/...\nhttps://berita.gorontaloprov.go.id/...\n..."}
-                  rows={7}
-                  className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors resize-none placeholder-gray-600 font-mono"
-                />
-                <button
-                  onClick={handleBulkImport}
-                  disabled={bulkLoading || !bulkUrls.trim()}
-                  className="w-full bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl py-3 text-sm font-mono transition-all disabled:opacity-40"
-                >
+                <textarea value={bulkUrls} onChange={e => setBulkUrls(e.target.value)} placeholder={"https://berita.gorontaloprov.go.id/...\nhttps://berita.gorontaloprov.go.id/...\n..."} rows={7} className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors resize-none placeholder-gray-600 font-mono" />
+                <button onClick={handleBulkImport} disabled={bulkLoading || !bulkUrls.trim()} className="w-full bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl py-3 text-sm font-mono transition-all disabled:opacity-40">
                   {bulkLoading
                     ? `⏳ Memproses... (${bulkProgress.done}/${bulkProgress.total})`
                     : `🚀 Import ${bulkUrls.split('\n').filter(u => u.trim().startsWith('http')).length} URL`}
@@ -259,7 +247,6 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* Mode: Manual — Kategori, Judul, Konten, Simpan */}
             {importMode !== 'bulk' && (
               <>
                 <div>
@@ -296,7 +283,7 @@ export default function Dashboard() {
               <button onClick={() => setFilterCat('all')} className={`flex-shrink-0 text-xs rounded-full px-3 py-1.5 border font-mono transition-all ${filterCat === 'all' ? 'bg-asphalt-600 border-asphalt-500 text-gray-200' : 'bg-asphalt-800 border-asphalt-600 text-gray-500'}`}>Semua ({knowledge.length})</button>
               {CATEGORIES.map(cat => (
                 <button key={cat.id} onClick={() => setFilterCat(cat.id)} className={`flex-shrink-0 text-xs rounded-full px-3 py-1.5 border font-mono whitespace-nowrap transition-all ${filterCat === cat.id ? 'bg-asphalt-600 border-asphalt-500 text-gray-200' : 'bg-asphalt-800 border-asphalt-600 text-gray-500'}`}>
-                  {cat.emoji} ({knowledge.filter(k => k.category === cat.id).length})
+                  {cat.emoji} ({knowledge.filter(k => k.kategori === cat.id).length})
                 </button>
               ))}
             </div>
@@ -306,20 +293,22 @@ export default function Dashboard() {
               ? <div className="text-center py-10 text-gray-600"><div className="text-3xl mb-2">📭</div><p className="font-mono text-sm">Belum ada data.</p></div>
               : <div className="space-y-3">
                   {filtered.map(item => {
-                    const cat = CATEGORIES.find(c => c.id === item.category)
+                    const cat = CATEGORIES.find(c => c.id === item.kategori)
                     return (
                       <div key={item.id} className="bg-asphalt-800 border border-asphalt-600 rounded-2xl p-4">
                         <div className="flex items-start justify-between gap-3 mb-2">
                           <div className="flex-1 min-w-0">
+                            {/* ✅ Pakai item.kategori dan item.judul */}
                             <span className="text-xs font-mono text-gray-500">{cat?.emoji} {cat?.label}</span>
-                            <h3 className="font-display font-600 text-sm text-gray-200 mt-0.5">{item.title}</h3>
+                            <h3 className="font-display font-600 text-sm text-gray-200 mt-0.5">{item.judul}</h3>
                           </div>
                           <div className="flex gap-1.5 flex-shrink-0">
                             <button onClick={() => handleEdit(item)} className="text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-400 rounded-lg px-2.5 py-1 transition-all">Edit</button>
                             <button onClick={() => handleDelete(item.id)} className="text-xs bg-signal-red/10 hover:bg-signal-red/20 border border-signal-red/20 text-signal-red rounded-lg px-2.5 py-1 transition-all">Hapus</button>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-400 leading-relaxed">{item.content}</p>
+                        {/* ✅ Pakai item.konten */}
+                        <p className="text-xs text-gray-400 leading-relaxed">{item.konten}</p>
                       </div>
                     )
                   })}

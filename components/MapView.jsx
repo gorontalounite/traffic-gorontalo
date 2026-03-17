@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { KECAMATAN_LIST } from '../lib/supabase'
 
-const MAP_CENTER = { lat: -0.6300, lng: 123.0100 }
+const MAP_CENTER = { lat: -0.638939, lng: 122.927076 }
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
 export default function MapView({ reports, selectedKec, onSelectKec }) {

@@ -20,7 +20,7 @@ export default function ChatPanel({ reports }) {
   const inputRef = useRef(null)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
   }, [messages])
 
   const buildContext = () => {

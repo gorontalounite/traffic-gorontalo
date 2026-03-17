@@ -83,7 +83,7 @@ export default function ChatPanel({ reports }) {
         </div>
 
         {/* Messages */}
-        <div className="h-52 overflow-y-auto px-4 py-3 space-y-3 scroll-smooth">
+        <div className="h-72 overflow-y-auto px-4 py-3 space-y-3 scroll-smooth">
           {messages.map((msg, i) => (
             <div
               key={i}

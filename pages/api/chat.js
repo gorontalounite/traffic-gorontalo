@@ -21,31 +21,29 @@ async function fetchKnowledge(question) {
         .select('judul, konten')
         .eq('aktif', true)
         .order('created_at', { ascending: false })
-        .limit(10)
-      return data?.map(k => `[${k.judul}]: ${k.konten}`).join('\n\n') || ''
+        .limit(5) // ✅ limit 5
+      return data?.map(k => `[${k.judul}]: ${k.konten.substring(0, 300)}`).join('\n\n') || ''
     }
 
-    // Full-text search di kolom konten
     const searchQuery = keywords.join(' | ')
     const { data } = await supabase
       .from('rag_knowledge')
       .select('judul, konten')
       .eq('aktif', true)
       .textSearch('konten', searchQuery, { type: 'websearch', config: 'indonesian' })
-      .limit(10)
+      .limit(5) // ✅ limit 5
 
-    // Fallback ke ILIKE kalau full-text search kosong
     if (!data || data.length === 0) {
       const likePromises = keywords.slice(0, 3).map(kw =>
-        supabase.from('rag_knowledge').select('judul, konten').eq('aktif', true).ilike('konten', `%${kw}%`).limit(5)
+        supabase.from('rag_knowledge').select('judul, konten').eq('aktif', true).ilike('konten', `%${kw}%`).limit(3) // ✅ limit 3
       )
       const results = await Promise.all(likePromises)
       const combined = results.flatMap(r => r.data || [])
-      const unique = Array.from(new Map(combined.map(k => [k.judul, k])).values()).slice(0, 10)
-      return unique.map(k => `[${k.judul}]: ${k.konten}`).join('\n\n') || ''
+      const unique = Array.from(new Map(combined.map(k => [k.judul, k])).values()).slice(0, 5) // ✅ slice 5
+      return unique.map(k => `[${k.judul}]: ${k.konten.substring(0, 300)}`).join('\n\n') || ''
     }
 
-    return data.map(k => `[${k.judul}]: ${k.konten}`).join('\n\n')
+    return data.map(k => `[${k.judul}]: ${k.konten.substring(0, 300)}`).join('\n\n')
   } catch (e) {
     console.error('fetchKnowledge error:', e)
     return ''

@@ -19,15 +19,9 @@ export default async function handler(req, res) {
   const { message, context } = req.body
   if (!message) return res.status(400).json({ error: 'Message is required' })
 
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  
-  console.log('=== CHAT DEBUG ===')
-  console.log('API Key exists:', !!apiKey)
-  console.log('API Key prefix:', apiKey ? apiKey.substring(0, 15) : 'NONE')
-  console.log('Message:', message)
+  const apiKey = process.env.GEMINI_API_KEY
 
-  if (!apiKey || apiKey === 'YOUR_ANTHROPIC_API_KEY_HERE') {
-    console.log('FALLBACK: no API key')
+  if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
     return res.status(200).json({ reply: getFallbackResponse(message), fallback: true })
   }
 
@@ -36,29 +30,26 @@ export default async function handler(req, res) {
   try {
     const systemPrompt = `Kamu adalah asisten pemantauan lalu lintas untuk Kabupaten Gorontalo, area Kampung Jawa dan sekitarnya, mencakup 6 kecamatan: Limboto, Limboto Barat, Tibawa, Bongomeme, Dungaliyo, dan Pulubala.\n\n${knowledge ? `KNOWLEDGE BASE:\n${knowledge}\n\n` : ''}${context ? `LAPORAN LAPANGAN TERKINI:\n${context}\n\n` : ''}PANDUAN: Jawab Bahasa Indonesia ramah dan singkat (max 4-5 kalimat). UTAMAKAN info dari Knowledge Base. Gunakan emoji 🟢🟡🔴🚗.`
 
-    console.log('Calling Anthropic API...')
-    
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 500,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: message }],
-      }),
-    })
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ role: 'user', parts: [{ text: message }] }],
+          generationConfig: { maxOutputTokens: 500, temperature: 0.7 },
+        }),
+      }
+    )
 
     const data = await response.json()
-    console.log('Anthropic response status:', response.status)
-    console.log('Anthropic response:', JSON.stringify(data).substring(0, 200))
+    if (!response.ok) throw new Error(data.error?.message || 'Gemini API error')
 
-    if (!response.ok) throw new Error(data.error?.message || 'API error')
-    return res.status(200).json({ reply: data.content[0].text, fallback: false })
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
+    if (!reply) throw new Error('Empty response from Gemini')
+
+    return res.status(200).json({ reply, fallback: false })
   } catch (error) {
     console.error('Chat API error:', error.message)
     return res.status(200).json({ reply: getFallbackResponse(message), fallback: true })

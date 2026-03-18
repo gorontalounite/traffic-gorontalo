@@ -17,6 +17,7 @@ export default function Home() {
   const [localReports, setLocalReports] = useState([])
   const [zoomTarget, setZoomTarget] = useState(null)
   const [routeData, setRouteData] = useState(null)
+  const [embedPosts, setEmbedPosts] = useState([])
 
   const fetchReports = async () => {
     if (!supabase) { setLoadingReports(false); return }
@@ -36,6 +37,15 @@ export default function Home() {
 
   useEffect(() => {
     fetchReports()
+    // Fetch embed posts
+    if (supabase) {
+    supabase
+    .from('embed_posts')
+    .select('*')
+    .eq('aktif', true)
+    .order('created_at', { ascending: false })
+    .then(({ data }) => { if (data) setEmbedPosts(data) })
+    }
     if (!supabase) return
     const channel = supabase
       .channel('laporan-realtime')
@@ -101,7 +111,7 @@ export default function Home() {
           />
           <ReportForm onReportSubmitted={handleReportSubmitted} />
           <ReportHistory reports={allReports} loading={loadingReports} />
-          <EmbedFeed />
+          <EmbedFeed posts={embedPosts} />
           <footer className="px-4 pb-8 text-center">
             <div className="road-divider mb-4" />
             <p className="text-xs text-gray-700 font-mono">Arus Lalu Lintas Kampung Jawa · Kab. Gorontalo</p>

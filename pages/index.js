@@ -7,6 +7,7 @@ import ChatPanel from '../components/ChatPanel'
 import MapView from '../components/MapView'
 import ReportForm from '../components/ReportForm'
 import ReportHistory from '../components/ReportHistory'
+import EmbedFeed from '../components/EmbedFeed'
 import ThemeToggle from '../components/ThemeToggle'
 
 export default function Home() {
@@ -100,7 +101,7 @@ export default function Home() {
           />
           <ReportForm onReportSubmitted={handleReportSubmitted} />
           <ReportHistory reports={allReports} loading={loadingReports} />
-
+          <EmbedFeed />
           <footer className="px-4 pb-8 text-center">
             <div className="road-divider mb-4" />
             <p className="text-xs text-gray-700 font-mono">Arus Lalu Lintas Kampung Jawa · Kab. Gorontalo</p>

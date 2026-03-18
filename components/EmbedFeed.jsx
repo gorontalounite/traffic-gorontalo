@@ -12,9 +12,7 @@ export default function EmbedFeed() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchPosts()
-  }, [])
+  useEffect(() => { fetchPosts() }, [])
 
   const fetchPosts = async () => {
     if (!supabase) { setLoading(false); return }

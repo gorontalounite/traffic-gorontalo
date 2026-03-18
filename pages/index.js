@@ -15,6 +15,7 @@ export default function Home() {
   const [loadingReports, setLoadingReports] = useState(true)
   const [selectedKec, setSelectedKec] = useState(null)
   const [localReports, setLocalReports] = useState([])
+  const [zoomTarget, setZoomTarget] = useState(null) // ✅ BARU
 
   const fetchReports = async () => {
     if (!supabase) { setLoadingReports(false); return }
@@ -65,32 +66,21 @@ export default function Home() {
         <header className="sticky top-0 z-50 bg-asphalt-900/95 backdrop-blur border-b border-asphalt-700">
           <div className="max-w-lg mx-auto px-4 py-2.5">
             <div className="flex items-center justify-between">
-
-              {/* Logo kiri */}
               <div className="flex items-center gap-1.5">
                 <Image src="/LogoPoldaGTO.png" alt="Polda Gorontalo" width={34} height={34} className="object-contain" />
                 <Image src="/LogoSatlantas.png" alt="Satlantas" width={30} height={30} className="object-contain" />
               </div>
-
-              {/* Judul tengah */}
               <div className="flex flex-col items-center text-center flex-1 px-2">
                 <h1 className="font-display font-800 text-xs text-gray-100 leading-tight tracking-wide uppercase">
                   Arus Lalu Lintas
                 </h1>
-                <p className="text-xs text-gray-300 font-body leading-tight">
-                  di Kampung Jawa
-                </p>
-                <p className="text-xs text-gray-600 font-mono leading-tight">
-                  Kab. Gorontalo · Live
-                </p>
+                <p className="text-xs text-gray-300 font-body leading-tight">di Kampung Jawa</p>
+                <p className="text-xs text-gray-600 font-mono leading-tight">Kab. Gorontalo · Live</p>
               </div>
-
-              {/* Logo kanan + toggle */}
               <div className="flex items-center gap-1.5">
                 <Image src="/LogoGorontaloUnite.png" alt="Gorontalo Unite" width={34} height={34} className="object-contain rounded-full" />
                 <ThemeToggle />
               </div>
-
             </div>
           </div>
           <div className="road-divider" />
@@ -99,19 +89,20 @@ export default function Home() {
         <main className="max-w-lg mx-auto pt-4">
           <AlertBanner reports={allReports} />
           <StatusBar reports={allReports} />
-          <ChatPanel reports={allReports} />
-          <MapView reports={allReports} selectedKec={selectedKec} onSelectKec={setSelectedKec} />
+          <ChatPanel reports={allReports} onZoomLocation={setZoomTarget} /> {/* ✅ BARU: onZoomLocation */}
+          <MapView
+            reports={allReports}
+            selectedKec={selectedKec}
+            onSelectKec={setSelectedKec}
+            zoomTarget={zoomTarget} // ✅ BARU: zoomTarget
+          />
           <ReportForm onReportSubmitted={handleReportSubmitted} />
           <ReportHistory reports={allReports} loading={loadingReports} />
 
           <footer className="px-4 pb-8 text-center">
             <div className="road-divider mb-4" />
-            <p className="text-xs text-gray-700 font-mono">
-              Arus Lalu Lintas Kampung Jawa · Kab. Gorontalo
-            </p>
-            <p className="text-xs text-gray-800 font-mono mt-1">
-              Limboto · Limboto Barat · Tibawa · Bongomeme · Dungaliyo · Pulubala
-            </p>
+            <p className="text-xs text-gray-700 font-mono">Arus Lalu Lintas Kampung Jawa · Kab. Gorontalo</p>
+            <p className="text-xs text-gray-800 font-mono mt-1">Limboto · Limboto Barat · Tibawa · Bongomeme · Dungaliyo · Pulubala</p>
           </footer>
         </main>
       </div>

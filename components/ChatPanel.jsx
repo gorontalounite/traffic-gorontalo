@@ -215,7 +215,6 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     if (onZoomLocation) onZoomLocation(alt.tujuan)
     if (onRouteFound) onRouteFound({ asal: alt.asal, tujuan: alt.tujuan })
 
-    // Build Maps embed URL directions
     const mapUrl = API_KEY
       ? `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${alt.asal.lat},${alt.asal.lng}&destination=${alt.tujuan.lat},${alt.tujuan.lng}&mode=driving&language=id`
       : null
@@ -228,7 +227,6 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
-
       setMessages(prev => {
         const updated = [...prev]
         updated[updated.length - 1] = {
@@ -289,7 +287,6 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
                   : 'bg-asphalt-700 border border-asphalt-600 text-gray-300 rounded-bl-sm'
               }`}>
                 {msg.text}
-                {/* ✅ Maps embed directions di dalam chat bubble */}
                 {msg.mapUrl && (
                   <div className="mt-3 rounded-xl overflow-hidden border border-asphalt-500">
                     <iframe
@@ -357,16 +354,26 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
           </div>
         )}
 
-        {/* Step: Setelah rute — 2 tombol aksi */}
+        {/* Step: Setelah rute — 3 tombol aksi */}
         {step === STEP.RUTE && !loadingRute && (
           <div className="px-4 pb-4 pt-2">
             <div className="flex gap-2">
-              <button onClick={reset} className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
+              <button
+                onClick={reset}
+                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
+              >
                 🔄 Pilih Rute Lain
-                <a href="/peta" className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono text-center">
+              </button>
+              
+                href="/peta"
+                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono text-center"
+              <a>
                 🗺️ Peta Penuh
               </a>
-              <button onClick={handleBukaMaps} className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
+              <button
+                onClick={handleBukaMaps}
+                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
+              >
                 ↗️ Buka Maps
               </button>
             </div>

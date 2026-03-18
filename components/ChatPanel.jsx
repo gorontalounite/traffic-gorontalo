@@ -275,7 +275,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
         </div>
 
         {/* Messages */}
-        <div className="h-80 overflow-y-auto px-4 py-3 space-y-3">
+        <div className="h-screen overflow-y-auto px-4 py-3 space-y-3">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-line ${

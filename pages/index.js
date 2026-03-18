@@ -9,6 +9,7 @@ import ReportForm from '../components/ReportForm'
 import ReportHistory from '../components/ReportHistory'
 import EmbedFeed from '../components/EmbedFeed'
 import ThemeToggle from '../components/ThemeToggle'
+import Link from 'next/link'
 
 export default function Home() {
   const [reports, setReports] = useState([])
@@ -109,6 +110,11 @@ export default function Home() {
             zoomTarget={zoomTarget}
             routeData={routeData}
           />
+          <div className="px-4 mb-4">
+            <Link href="/peta" className="w-full flex items-center justify-center gap-2 text-xs bg-asphalt-800 hover:bg-asphalt-700 border border-asphalt-600 text-gray-400 hover:text-gray-200 rounded-xl py-2.5 transition-all font-mono">
+              🗺️ Lihat Peta Penuh
+            </Link>
+          </div>
           <ReportForm onReportSubmitted={handleReportSubmitted} />
           <ReportHistory reports={allReports} loading={loadingReports} />
           <EmbedFeed posts={embedPosts} />

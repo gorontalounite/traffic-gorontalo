@@ -4,7 +4,7 @@ import { KECAMATAN_LIST } from '../lib/supabase'
 const MAP_CENTER = { lat: 0.6284, lng: 122.8918 }
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
-export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget, routeData }) {
+export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget, routeData, fullscreen = false }) {
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
   const directionsRendererRef = useRef(null)
@@ -142,7 +142,7 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget,
       {/* Map container */}
       <div className="rounded-2xl overflow-hidden border border-asphalt-600 relative">
         {hasApiKey ? (
-          <div ref={mapRef} style={{ width: '100%', height: '300px' }} />
+          <div ref={mapRef} style={{ width: '100%', height: fullscreen ? 'calc(100vh - 140px)' : '300px' }} />
         ) : (
           <iframe
             src={`https://www.openstreetmap.org/export/embed.html?bbox=${MAP_CENTER.lng - 0.08}%2C${MAP_CENTER.lat - 0.06}%2C${MAP_CENTER.lng + 0.08}%2C${MAP_CENTER.lat + 0.06}&layer=mapnik`}

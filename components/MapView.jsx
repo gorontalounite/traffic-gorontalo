@@ -20,7 +20,6 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget,
     return found ? found.status : null
   }
 
-  // Load Google Maps JS API sekali
   useEffect(() => {
     if (!hasApiKey) return
     if (window.google?.maps) { setMapsLoaded(true); return }
@@ -32,7 +31,6 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget,
     document.head.appendChild(script)
   }, [])
 
-  // Init peta setelah API loaded
   useEffect(() => {
     if (!mapsLoaded || !mapRef.current || mapInstanceRef.current) return
 
@@ -58,20 +56,17 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget,
     directionsRendererRef.current.setMap(mapInstanceRef.current)
   }, [mapsLoaded])
 
-  // Update mapType
   useEffect(() => {
     if (!mapInstanceRef.current) return
     mapInstanceRef.current.setMapTypeId(mapType)
   }, [mapType])
 
-  // Zoom ke target kalau ada
   useEffect(() => {
     if (!mapInstanceRef.current || !zoomTarget) return
     mapInstanceRef.current.panTo({ lat: zoomTarget.lat, lng: zoomTarget.lng })
     mapInstanceRef.current.setZoom(16)
   }, [zoomTarget])
 
-  // Tampilkan rute kalau ada routeData
   useEffect(() => {
     if (!mapInstanceRef.current || !directionsRendererRef.current || !routeData) return
 
@@ -86,52 +81,9 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget,
       }
     })
   }, [routeData, mapsLoaded])
+
   return (
     <div className="mx-4 mb-4">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs text-gray-500 font-mono uppercase tracking-widest">Peta Lalu Lintas</p>
-        {!hasApiKey && (
-          <span className="text-xs bg-signal-yellow/10 text-signal-yellow border border-signal-yellow/20 rounded-full px-2.5 py-0.5 font-mono">
-            No API Key
-          </span>
-        )}
-      </div>
-
-      {/* Kecamatan selector */}
-      <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3">
-        <button
-          onClick={() => onSelectKec(null)}
-          className={`flex-shrink-0 text-xs rounded-full px-3 py-1.5 border transition-all font-mono ${
-            !selectedKec ? 'bg-asphalt-600 border-asphalt-500 text-gray-200' : 'bg-asphalt-800 border-asphalt-600 text-gray-500 hover:text-gray-300'
-          }`}
-        >
-          Semua
-        </button>
-        {KECAMATAN_LIST.map((kec) => {
-          const status = getKecStatus(kec.id)
-          const color = status ? statusColor[status] : null
-          return (
-            <button
-              key={kec.id}
-              onClick={() => {
-                onSelectKec(kec.id === selectedKec ? null : kec.id)
-                if (mapInstanceRef.current && kec.lat) {
-                  mapInstanceRef.current.panTo({ lat: kec.lat, lng: kec.lng })
-                  mapInstanceRef.current.setZoom(14)
-                }
-              }}
-              className={`flex-shrink-0 flex items-center gap-1.5 text-xs rounded-full px-3 py-1.5 border transition-all font-mono whitespace-nowrap ${
-                selectedKec === kec.id ? 'bg-asphalt-600 border-asphalt-500 text-gray-200' : 'bg-asphalt-800 border-asphalt-600 text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              {color && <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />}
-              {kec.name.replace('Kec. ', '')}
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Map container */}
       <div className="rounded-2xl overflow-hidden border border-asphalt-600 relative">
         {hasApiKey ? (
           <div ref={mapRef} style={{ width: '100%', height: fullscreen ? 'calc(100vh - 140px)' : '300px' }} />
@@ -155,19 +107,6 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget,
             </button>
           )}
         </div>
-
-        {/* Legend */}
-        {hasApiKey && (
-          <div className="absolute top-3 left-3">
-            <div className="bg-asphalt-800/90 backdrop-blur border border-asphalt-600 rounded-lg px-2.5 py-1.5">
-              <div className="flex items-center gap-2 text-xs font-mono">
-                <span className="flex items-center gap-1"><span className="w-2 h-1 rounded bg-signal-green inline-block" />Lancar</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-1 rounded bg-signal-yellow inline-block" />Padat</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-1 rounded bg-signal-red inline-block" />Macet</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

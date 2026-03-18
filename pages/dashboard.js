@@ -32,6 +32,9 @@ export default function Dashboard() {
   const [embedSaving, setEmbedSaving] = useState(false)
   const [embedSaved, setEmbedSaved] = useState(false)
   const [embedPosts, setEmbedPosts] = useState([])
+  const [thumbnailFile, setThumbnailFile] = useState(null)
+  const [thumbnailPreview, setThumbnailPreview] = useState(null)
+  const [thumbnailUploading, setThumbnailUploading] = useState(false)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -54,6 +57,35 @@ export default function Dashboard() {
     if (!supabase) return
     const { data } = await supabase.from('embed_posts').select('*').order('created_at', { ascending: false })
     if (data) setEmbedPosts(data)
+  }
+
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setThumbnailFile(file)
+    setThumbnailPreview(URL.createObjectURL(file))
+  }
+
+  const uploadThumbnail = async () => {
+    if (!thumbnailFile || !supabase) return null
+    setThumbnailUploading(true)
+    try {
+      const ext = thumbnailFile.name.split('.').pop()
+      const fileName = `${Date.now()}.${ext}`
+      const { error } = await supabase.storage
+        .from('embed-thumbnails')
+        .upload(fileName, thumbnailFile, { cacheControl: '3600', upsert: false })
+      if (error) throw error
+      const { data: urlData } = supabase.storage
+        .from('embed-thumbnails')
+        .getPublicUrl(fileName)
+      return urlData.publicUrl
+    } catch (e) {
+      console.error('Upload thumbnail gagal:', e)
+      return null
+    } finally {
+      setThumbnailUploading(false)
+    }
   }
 
   const handleSave = async () => {
@@ -131,16 +163,37 @@ export default function Dashboard() {
     if (!embedForm.url.trim()) return
     setEmbedSaving(true)
     try {
-      await supabase.from('embed_posts').insert([{ url: embedForm.url, caption: embedForm.caption, platform: embedForm.platform, aktif: true }])
+      // Upload thumbnail dulu kalau ada
+      let thumbnailUrl = null
+      if (thumbnailFile) {
+        thumbnailUrl = await uploadThumbnail()
+      }
+
+      await supabase.from('embed_posts').insert([{
+        url: embedForm.url,
+        caption: embedForm.caption,
+        platform: embedForm.platform,
+        aktif: true,
+        thumbnail_url: thumbnailUrl,
+      }])
+
+      // Reset form
       setEmbedForm({ url: '', caption: '', platform: 'instagram' })
+      setThumbnailFile(null)
+      setThumbnailPreview(null)
       setEmbedSaved(true)
       setTimeout(() => setEmbedSaved(false), 2000)
       fetchEmbedPosts()
     } catch (e) { console.error(e) } finally { setEmbedSaving(false) }
   }
 
-  const handleEmbedDelete = async (id) => {
+  const handleEmbedDelete = async (id, thumbnailUrl) => {
     if (!confirm('Hapus post ini?')) return
+    // Hapus thumbnail dari storage kalau ada
+    if (thumbnailUrl && supabase) {
+      const fileName = thumbnailUrl.split('/').pop()
+      await supabase.storage.from('embed-thumbnails').remove([fileName])
+    }
     await supabase.from('embed_posts').delete().eq('id', id)
     fetchEmbedPosts()
   }
@@ -190,9 +243,11 @@ export default function Dashboard() {
 
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
 
-          {/* ✅ Embed Posts Section — PALING ATAS */}
+          {/* Embed Posts Section */}
           <div className="bg-asphalt-800 border border-asphalt-600 rounded-2xl p-5 space-y-4">
             <h2 className="font-display font-600 text-sm text-gray-200">📱 Tambah Post Media Sosial / Berita</h2>
+
+            {/* Platform selector */}
             <div>
               <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Platform</label>
               <div className="flex gap-2 flex-wrap">
@@ -204,30 +259,78 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
+
+            {/* URL */}
             <div>
               <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">URL</label>
               <input value={embedForm.url} onChange={e => setEmbedForm({ ...embedForm, url: e.target.value })}
                 placeholder="https://www.instagram.com/p/..." className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600" />
             </div>
+
+            {/* Caption */}
             <div>
               <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Caption (opsional)</label>
               <input value={embedForm.caption} onChange={e => setEmbedForm({ ...embedForm, caption: e.target.value })}
                 placeholder="Contoh: Kondisi Jl. Trans Sulawesi pagi ini..." className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600" />
             </div>
-            <button onClick={handleEmbedSave} disabled={embedSaving || embedSaved || !embedForm.url.trim()}
+
+            {/* Thumbnail upload */}
+            <div>
+              <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Thumbnail (opsional)</label>
+              <div className="flex gap-3 items-start">
+                {/* Preview */}
+                {thumbnailPreview && (
+                  <div className="relative flex-shrink-0">
+                    <img src={thumbnailPreview} alt="preview" className="w-16 h-16 object-cover rounded-xl border border-asphalt-500" />
+                    <button
+                      onClick={() => { setThumbnailFile(null); setThumbnailPreview(null) }}
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-signal-red rounded-full text-white text-xs flex items-center justify-center leading-none"
+                    >×</button>
+                  </div>
+                )}
+                {/* Upload button */}
+                <label className="flex-1 cursor-pointer">
+                  <div className={`w-full border-2 border-dashed rounded-xl px-3 py-3 text-center transition-all ${thumbnailFile ? 'border-asphalt-500 bg-asphalt-700' : 'border-asphalt-600 hover:border-asphalt-500 bg-asphalt-700/50'}`}>
+                    <p className="text-xs text-gray-400 font-mono">
+                      {thumbnailFile ? `✓ ${thumbnailFile.name}` : '🖼️ Pilih gambar...'}
+                    </p>
+                    <p className="text-xs text-gray-600 font-mono mt-0.5">JPG, PNG, WebP · maks 2MB</p>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleThumbnailChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Simpan button */}
+            <button onClick={handleEmbedSave} disabled={embedSaving || embedSaved || !embedForm.url.trim() || thumbnailUploading}
               className={`w-full rounded-xl py-3 text-sm font-display font-600 transition-all ${embedSaved ? 'bg-signal-green/20 border border-signal-green/30 text-signal-green' : 'bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 disabled:opacity-40'}`}>
-              {embedSaved ? '✓ Tersimpan!' : embedSaving ? 'Menyimpan...' : 'Simpan Post'}
+              {thumbnailUploading ? '⏳ Upload thumbnail...' : embedSaved ? '✓ Tersimpan!' : embedSaving ? 'Menyimpan...' : 'Simpan Post'}
             </button>
+
+            {/* List posts */}
             {embedPosts.length > 0 && (
               <div className="space-y-2 pt-2">
                 <p className="text-xs text-gray-600 font-mono">{embedPosts.length} post tersimpan</p>
                 {embedPosts.map(post => (
-                  <div key={post.id} className="flex items-center justify-between gap-3 bg-asphalt-700 border border-asphalt-600 rounded-xl px-3 py-2.5">
+                  <div key={post.id} className="flex items-center gap-3 bg-asphalt-700 border border-asphalt-600 rounded-xl px-3 py-2.5">
+                    {/* Thumbnail mini */}
+                    {post.thumbnail_url ? (
+                      <img src={post.thumbnail_url} alt="" className="w-10 h-10 object-cover rounded-lg flex-shrink-0" />
+                    ) : (
+                      <div className="w-10 h-10 bg-asphalt-600 rounded-lg flex-shrink-0 flex items-center justify-center text-lg">
+                        {post.platform === 'instagram' ? '📸' : post.platform === 'tiktok' ? '🎵' : post.platform === 'berita' ? '📰' : '🔗'}
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <span className="text-xs font-mono text-gray-500">{post.platform}</span>
                       <p className="text-xs text-gray-300 truncate">{post.caption || post.url}</p>
                     </div>
-                    <button onClick={() => handleEmbedDelete(post.id)}
+                    <button onClick={() => handleEmbedDelete(post.id, post.thumbnail_url)}
                       className="text-xs bg-signal-red/10 hover:bg-signal-red/20 border border-signal-red/20 text-signal-red rounded-lg px-2.5 py-1 transition-all flex-shrink-0">
                       Hapus
                     </button>

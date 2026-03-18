@@ -72,9 +72,6 @@ export default function Home() {
               <div className="flex flex-col items-center text-center flex-1 px-2">
                 <h1 className="font-display font-800 text-xs text-gray-100 leading-tight tracking-wide uppercase">
                   Arus Lalu Lintas
-                </h1>
-                <p className="text-xs text-gray-300 font-body leading-tight">di Kampung Jawa</p>
-                <p className="text-xs text-gray-600 font-mono leading-tight">Kab. Gorontalo · Live</p>
               </div>
               <div className="flex items-center gap-1.5">
                 <Image src="/LogoGorontaloUnite.png" alt="Gorontalo Unite" width={34} height={34} className="object-contain rounded-full" />

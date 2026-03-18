@@ -3,7 +3,6 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { supabase } from '../lib/supabase'
 import AlertBanner from '../components/AlertBanner'
-import StatusBar from '../components/StatusBar'
 import ChatPanel from '../components/ChatPanel'
 import MapView from '../components/MapView'
 import ReportForm from '../components/ReportForm'
@@ -88,7 +87,6 @@ export default function Home() {
 
         <main className="max-w-lg mx-auto pt-4">
           <AlertBanner reports={allReports} />
-          <StatusBar reports={allReports} onSelectKec={(kec) => setZoomTarget(kec)} />
           <ChatPanel reports={allReports} onZoomLocation={setZoomTarget} /> {/* ✅ BARU: onZoomLocation */}
           <MapView
             reports={allReports}

@@ -252,6 +252,10 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     }
   }
 
+  const handlePetaPenuh = () => {
+    window.location.href = '/peta'
+  }
+
   return (
     <div className="mx-4 mb-4">
       <div className="rounded-2xl border border-asphalt-600 bg-asphalt-800 overflow-hidden">
@@ -357,12 +361,12 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
               >
                 🔄 Pilih Rute Lain
               </button>
-              <a
-                href="/peta"
-                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono text-center"
+              <button
+                onClick={handlePetaPenuh}
+                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
               >
                 🗺️ Peta Penuh
-              </a>
+              </button>
             </div>
           </div>
         )}

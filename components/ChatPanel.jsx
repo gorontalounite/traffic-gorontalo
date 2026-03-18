@@ -239,8 +239,8 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     addMsg('user', val)
     setInputAsal('')
     if (!rute) {
-      addMsg('assistant', `Maaf, lokasi "${val}" belum ada dalam panduan rute kami.\n\nCoba ketik nama kecamatan atau kabupaten/kota yang lebih spesifik.`)
-      return
+    addMsg('assistant', `"${val}" ada di kabupaten/kota mana?\n\nContoh: Kota Gorontalo, Kab. Bone Bolango, Kab. Gorontalo, Gorontalo Utara, Boalemo, atau Pohuwato.`)
+    return
     }
     setRutePilihan(rute)
     setStep(STEP.ALTERNATIF)

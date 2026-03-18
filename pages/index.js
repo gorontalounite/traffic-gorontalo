@@ -78,17 +78,14 @@ export default function Home() {
               </div>
             </div>
           </div>
-          {/* Title di bawah logo, di atas divider */}
-          <div className="max-w-lg mx-auto px-4 pb-2.5 text-center">
-            <p className="text-xs font-display font-700 text-gray-300 uppercase tracking-widest">
-              Info Rute Lalu Lintas di Kampung Jawa
-            </p>
-          </div>
           <div className="road-divider" />
         </header>
 
         <main className="max-w-lg mx-auto pt-4">
           <AlertBanner reports={allReports} />
+          <p className="text-xs font-display font-700 text-gray-400 uppercase tracking-widest text-center py-2">
+            Info Rute Lalu Lintas di Kampung Jawa
+          </p>
           <ChatPanel
             reports={allReports}
             onZoomLocation={setZoomTarget}

@@ -263,9 +263,6 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
               <span className="w-2 h-2 rounded-full bg-signal-yellow" />
               <span className="w-2 h-2 rounded-full bg-signal-green" />
             </div>
-            <span className="font-display text-xs font-600 text-gray-400 uppercase tracking-wider">
-              Info Rute Lalu Lintas di Kampung Jawa
-            </span>
           </div>
           {step !== STEP.ARAH && (
             <button onClick={reset} className="text-xs text-gray-500 hover:text-gray-300 font-mono border border-asphalt-600 rounded-full px-2.5 py-1 transition-colors">

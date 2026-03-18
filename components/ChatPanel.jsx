@@ -142,7 +142,7 @@ const ARUS = {
       },
       {
         id: 'balik_3',
-        label: 'Alternatif 3 (berlaku pukul 16.00 WITA)',
+        label: 'Alternatif 3 (ab 16.00 WITA)',
         deskripsi: 'Dari Lokasi Ketupat → Jl. Trans Sulawesi (Yosonegoro–Hutabohu–Tenilo–Bolihuangga) → Jl. Reformasi → belok kanan Jl. A.A. Wahab → Kota Gorontalo',
         asal: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
@@ -170,7 +170,6 @@ const ARUS = {
   },
 }
 
-const KONTEKS_LAIN = ['medis','kesehatan','rumah sakit','polisi','pengamanan','event','acara','info','berita','wisata','hotel','makan','restoran']
 const STEP = { ARAH: 'arah', ALTERNATIF: 'alternatif', RUTE: 'rute' }
 
 export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
@@ -179,7 +178,6 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
   const [messages, setMessages] = useState([
     { role: 'assistant', text: '🗺️ Halo! Selamat datang di Info Lalu Lintas Kab. Gorontalo.\n\nHari ini mau kemana?' }
   ])
-  const [input, setInput] = useState('')
   const [loadingRute, setLoadingRute] = useState(false)
   const bottomRef = useRef(null)
 
@@ -199,7 +197,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     setSelectedArus(arusKey)
     setStep(STEP.ALTERNATIF)
     addMessage('user', ARUS[arusKey].label)
-    addMessage('assistant', 'Pilih alternatif rute:')
+    addMessage('assistant', 'Silakan pilih alternatif rute:')
   }
 
   const handlePilihAlternatif = async (alt) => {
@@ -239,51 +237,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
       })
     } finally {
       setLoadingRute(false)
-      addMessage('assistant', '❓ Ada yang ingin ditanyakan?\nAtau ketik *ulang* untuk pilih rute lain.')
     }
-  }
-
-  const handleInputSend = () => {
-    const msg = input.trim()
-    if (!msg) return
-    setInput('')
-    addMessage('user', msg)
-    const msgLower = msg.toLowerCase()
-
-    if (msgLower.includes('ulang') || msgLower.includes('kembali') || msgLower.includes('reset')) {
-      reset(); return
-    }
-
-    if (KONTEKS_LAIN.some(k => msgLower.includes(k))) {
-      addMessage('assistant', '📲 Untuk informasi medis, pengamanan, event, dan info lainnya,\nsilakan kunjungi:\n\n👉 Instagram: @gorontalo.unite')
-      return
-    }
-
-    // Cek nama desa dulu
-    const desaKey = Object.keys(DESA).find(d => msgLower.includes(d))
-    if (desaKey) {
-      const desa = DESA[desaKey]
-      if (onZoomLocation) onZoomLocation({ lat: desa.lat, lng: desa.lng })
-      addMessage('assistant', `🗺️ Peta sudah di-zoom ke Desa *${desaKey.charAt(0).toUpperCase() + desaKey.slice(1)}*, Kec. ${desa.kec}.\n\nCek kondisi lalu lintas di peta di bawah ya! 👇`)
-      return
-    }
-
-    // Cek lokasi utama
-    const lokasiDisebut = LOKASI.find(l =>
-      msgLower.includes(l.nama.toLowerCase().split(' ')[1] || l.nama.toLowerCase().split(' ')[0])
-    )
-    if (lokasiDisebut && onZoomLocation) {
-      onZoomLocation(lokasiDisebut)
-      addMessage('assistant', `🗺️ Peta sudah di-zoom ke *${lokasiDisebut.nama}*.\nCek kondisi di peta di bawah ya! 👇`)
-      return
-    }
-
-    addMessage('assistant', '🚦 Maaf, saya hanya bisa bantu info rute lalu lintas.\n\nMau pilih rute baru?')
-    setTimeout(() => reset(), 1500)
-  }
-
-  const handleKey = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleInputSend() }
   }
 
   return (
@@ -310,7 +264,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
         </div>
 
         {/* Messages */}
-        <div className="h-64 overflow-y-auto px-4 py-3 space-y-3">
+        <div className="h-48 overflow-y-auto px-4 py-3 space-y-3">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-line ${
@@ -354,44 +308,43 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
           </div>
         )}
 
-        {/* Step: Pilih Alternatif */}
+        {/* Step: Pilih Alternatif — button kecil */}
         {step === STEP.ALTERNATIF && selectedArus && (
           <div className="px-4 pb-4">
-            <p className="text-xs text-gray-600 font-mono mb-2">🛣️ Pilih alternatif rute:</p>
-            <div className="flex flex-col gap-2">
+            <p className="text-xs text-gray-600 font-mono mb-2">🛣️ Pilih alternatif:</p>
+            <div className="flex flex-wrap gap-2">
               {ARUS[selectedArus].alternatif.map(alt => (
                 <button
                   key={alt.id}
                   onClick={() => handlePilihAlternatif(alt)}
-                  className="text-left bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 hover:border-asphalt-500 text-gray-300 rounded-xl px-4 py-3 transition-all"
+                  className="text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 hover:border-asphalt-500 text-gray-300 hover:text-gray-100 rounded-full px-3 py-1.5 transition-all font-mono whitespace-nowrap"
                 >
-                  <p className="text-xs font-display font-600 text-gray-200 mb-1">{alt.label}</p>
-                  <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{alt.deskripsi}</p>
+                  {alt.label}
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* Step: Input teks setelah rute */}
+        {/* Step: Setelah rute — 2 tombol aksi */}
         {step === STEP.RUTE && !loadingRute && (
           <div className="px-4 pb-4 pt-2">
-            <div className="flex gap-2 items-center bg-asphalt-700 border border-asphalt-600 focus-within:border-asphalt-500 rounded-xl px-3 py-2 transition-colors">
-              <input
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={handleKey}
-                placeholder="Tanya kondisi titik tertentu, atau ketik 'ulang'..."
-                className="flex-1 bg-transparent text-sm text-gray-200 placeholder-gray-600 outline-none"
-              />
+            <div className="flex gap-2">
               <button
-                onClick={handleInputSend}
-                disabled={!input.trim()}
-                className="w-7 h-7 rounded-lg bg-asphalt-600 hover:bg-asphalt-500 disabled:opacity-30 flex items-center justify-center transition-all"
+                onClick={reset}
+                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
               >
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M1 6h10M6 1l5 5-5 5" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                🔄 Pilih Rute Lain
+              </button>
+              <button
+                onClick={() => {
+                  const alt = Object.values(ARUS).flatMap(a => a.alternatif).find(a => a.id === selectedArus)
+                  const tujuan = alt?.tujuan
+                  if (tujuan) window.open(`https://www.google.com/maps/search/?api=1&query=${tujuan.lat},${tujuan.lng}`, '_blank')
+                }}
+                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
+              >
+                🗺️ Buka di Maps
               </button>
             </div>
           </div>

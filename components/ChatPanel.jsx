@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 
+const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
+
 const LOKASI = [
   { id: 'tugu_ketupat',    nama: 'Tugu Ketupat Yosonegoro',     lat: 0.6381, lng: 122.9266 },
   { id: 'patung_tani',     nama: 'Patung Tani Isimu',           lat: 0.6422, lng: 122.8456 },
@@ -186,7 +188,8 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [messages])
 
-  const addMessage = (role, text) => setMessages(prev => [...prev, { role, text }])
+  const addMessage = (role, text, mapUrl = null) =>
+    setMessages(prev => [...prev, { role, text, mapUrl }])
 
   const reset = () => {
     setStep(STEP.ARAH)
@@ -212,6 +215,11 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     if (onZoomLocation) onZoomLocation(alt.tujuan)
     if (onRouteFound) onRouteFound({ asal: alt.asal, tujuan: alt.tujuan })
 
+    // Build Maps embed URL directions
+    const mapUrl = API_KEY
+      ? `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${alt.asal.lat},${alt.asal.lng}&destination=${alt.tujuan.lat},${alt.tujuan.lng}&mode=driving&language=id`
+      : null
+
     try {
       const res = await fetch('/api/rute', {
         method: 'POST',
@@ -226,6 +234,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
         updated[updated.length - 1] = {
           role: 'assistant',
           text: `🛣️ *${alt.label}*\n\n📋 ${alt.deskripsi}\n\n⏱️ Estimasi: ${data.durasi} | 📏 Jarak: ${data.jarak}`,
+          mapUrl,
         }
         return updated
       })
@@ -235,6 +244,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
         updated[updated.length - 1] = {
           role: 'assistant',
           text: `🛣️ *${alt.label}*\n\n📋 ${alt.deskripsi}`,
+          mapUrl,
         }
         return updated
       })
@@ -257,12 +267,10 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
 
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-asphalt-600">
-          <div className="flex items-center gap-2.5">
-            <div className="flex gap-1">
-              <span className="w-2 h-2 rounded-full bg-signal-red" />
-              <span className="w-2 h-2 rounded-full bg-signal-yellow" />
-              <span className="w-2 h-2 rounded-full bg-signal-green" />
-            </div>
+          <div className="flex gap-1">
+            <span className="w-2 h-2 rounded-full bg-signal-red" />
+            <span className="w-2 h-2 rounded-full bg-signal-yellow" />
+            <span className="w-2 h-2 rounded-full bg-signal-green" />
           </div>
           {step !== STEP.ARAH && (
             <button onClick={reset} className="text-xs text-gray-500 hover:text-gray-300 font-mono border border-asphalt-600 rounded-full px-2.5 py-1 transition-colors">
@@ -281,6 +289,21 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
                   : 'bg-asphalt-700 border border-asphalt-600 text-gray-300 rounded-bl-sm'
               }`}>
                 {msg.text}
+                {/* ✅ Maps embed directions di dalam chat bubble */}
+                {msg.mapUrl && (
+                  <div className="mt-3 rounded-xl overflow-hidden border border-asphalt-500">
+                    <iframe
+                      src={msg.mapUrl}
+                      width="100%"
+                      height="220"
+                      style={{ border: 0, display: 'block' }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Rute Maps"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -316,7 +339,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
           </div>
         )}
 
-        {/* Step: Pilih Alternatif — button kecil */}
+        {/* Step: Pilih Alternatif */}
         {step === STEP.ALTERNATIF && selectedArus && (
           <div className="px-4 pb-4">
             <p className="text-xs text-gray-600 font-mono mb-2">🛣️ Pilih rute:</p>
@@ -338,16 +361,10 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
         {step === STEP.RUTE && !loadingRute && (
           <div className="px-4 pb-4 pt-2">
             <div className="flex gap-2">
-              <button
-                onClick={reset}
-                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
-              >
+              <button onClick={reset} className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
                 🔄 Pilih Rute Lain
               </button>
-              <button
-                onClick={handleBukaMaps}
-                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
-              >
+              <button onClick={handleBukaMaps} className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
                 🗺️ Buka di Maps
               </button>
             </div>

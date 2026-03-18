@@ -175,11 +175,6 @@ const ARUS = {
 const STEP = { ARAH: 'arah', ALTERNATIF: 'alternatif', RUTE: 'rute' }
 
 export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
-  // Cari baris ini:
-if (onRouteFound) onRouteFound({ asal: alt.asal, tujuan: alt.tujuan })
-
-// Tambahkan TEPAT di bawahnya:
-sessionStorage.setItem('peta_rute', JSON.stringify({ asal: alt.asal, tujuan: alt.tujuan }))
   const [step, setStep] = useState(STEP.ARAH)
   const [selectedArus, setSelectedArus] = useState(null)
   const [selectedAltId, setSelectedAltId] = useState(null)
@@ -219,6 +214,7 @@ sessionStorage.setItem('peta_rute', JSON.stringify({ asal: alt.asal, tujuan: alt
 
     if (onZoomLocation) onZoomLocation(alt.tujuan)
     if (onRouteFound) onRouteFound({ asal: alt.asal, tujuan: alt.tujuan })
+    sessionStorage.setItem('peta_rute', JSON.stringify({ asal: alt.asal, tujuan: alt.tujuan }))
 
     const mapUrl = API_KEY
       ? `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${alt.asal.lat},${alt.asal.lng}&destination=${alt.tujuan.lat},${alt.tujuan.lng}&mode=driving&language=id`
@@ -255,6 +251,7 @@ sessionStorage.setItem('peta_rute', JSON.stringify({ asal: alt.asal, tujuan: alt
       setLoadingRute(false)
     }
   }
+
   return (
     <div className="mx-4 mb-4">
       <div className="rounded-2xl border border-asphalt-600 bg-asphalt-800 overflow-hidden">
@@ -350,7 +347,7 @@ sessionStorage.setItem('peta_rute', JSON.stringify({ asal: alt.asal, tujuan: alt
           </div>
         )}
 
-        {/* Step: Setelah rute — 3 tombol aksi */}
+        {/* Step: Setelah rute */}
         {step === STEP.RUTE && !loadingRute && (
           <div className="px-4 pb-4 pt-2">
             <div className="flex gap-2">

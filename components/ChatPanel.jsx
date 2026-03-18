@@ -13,7 +13,6 @@ const LOKASI = [
 ]
 
 const DESA = {
-  // Kecamatan Bongomeme
   'batu loreng': { kec: 'Bongomeme', lat: 0.5949, lng: 122.8659 },
   'batulayar': { kec: 'Bongomeme', lat: 0.5960, lng: 122.8700 },
   'bongohulawa': { kec: 'Bongomeme', lat: 0.5980, lng: 122.8720 },
@@ -29,8 +28,6 @@ const DESA = {
   'owalanga': { kec: 'Bongomeme', lat: 0.5925, lng: 122.8635 },
   'tohupo': { kec: 'Bongomeme', lat: 0.5915, lng: 122.8625 },
   'upomela': { kec: 'Bongomeme', lat: 0.5905, lng: 122.8615 },
-
-  // Kecamatan Dungaliyo
   'ambara': { kec: 'Dungaliyo', lat: 0.6050, lng: 122.8863 },
   'ayuhula': { kec: 'Dungaliyo', lat: 0.6060, lng: 122.8880 },
   'bongomeme': { kec: 'Dungaliyo', lat: 0.6041, lng: 122.8861 },
@@ -41,8 +38,6 @@ const DESA = {
   'momala': { kec: 'Dungaliyo', lat: 0.6065, lng: 122.8885 },
   'pangadaa': { kec: 'Dungaliyo', lat: 0.6075, lng: 122.8895 },
   'pilolalenga': { kec: 'Dungaliyo', lat: 0.6080, lng: 122.8900 },
-
-  // Kecamatan Tibawa
   'balahu': { kec: 'Tibawa', lat: 0.6450, lng: 122.8620 },
   'botumoputi': { kec: 'Tibawa', lat: 0.6460, lng: 122.8630 },
   'buhu': { kec: 'Tibawa', lat: 0.6470, lng: 122.8640 },
@@ -59,8 +54,6 @@ const DESA = {
   'reksonegoro': { kec: 'Tibawa', lat: 0.6540, lng: 122.8710 },
   'tolotio': { kec: 'Tibawa', lat: 0.6497, lng: 122.8449 },
   'ulobua': { kec: 'Tibawa', lat: 0.6550, lng: 122.8720 },
-
-  // Kecamatan Pulubala
   'ayumolingo': { kec: 'Pulubala', lat: 0.6520, lng: 122.8030 },
   'bakti': { kec: 'Pulubala', lat: 0.6510, lng: 122.8020 },
   'molalahu': { kec: 'Pulubala', lat: 0.6530, lng: 122.8040 },
@@ -72,8 +65,6 @@ const DESA = {
   'toyidito': { kec: 'Pulubala', lat: 0.6490, lng: 122.8000 },
   'tridharma': { kec: 'Pulubala', lat: 0.6570, lng: 122.8080 },
   'bukit aren': { kec: 'Pulubala', lat: 0.6480, lng: 122.7990 },
-
-  // Kecamatan Limboto Barat
   'daenaa': { kec: 'Limboto Barat', lat: 0.6390, lng: 122.9265 },
   'haya-haya': { kec: 'Limboto Barat', lat: 0.6400, lng: 122.9280 },
   'huidu': { kec: 'Limboto Barat', lat: 0.6380, lng: 122.9250 },
@@ -84,8 +75,6 @@ const DESA = {
   'pone': { kec: 'Limboto Barat', lat: 0.6340, lng: 122.9210 },
   'tunggulo': { kec: 'Limboto Barat', lat: 0.6420, lng: 122.9300 },
   'yosonegoro': { kec: 'Limboto Barat', lat: 0.6381, lng: 122.9266 },
-
-  // Kecamatan Limboto
   'biyonga': { kec: 'Limboto', lat: 0.6310, lng: 122.9810 },
   'bolihuangga': { kec: 'Limboto', lat: 0.6320, lng: 122.9820 },
   'bulota': { kec: 'Limboto', lat: 0.6280, lng: 122.9780 },
@@ -98,8 +87,6 @@ const DESA = {
   'polohungo': { kec: 'Limboto', lat: 0.6340, lng: 122.9840 },
   'tenilo': { kec: 'Limboto', lat: 0.6350, lng: 122.9850 },
   'tilihuwa': { kec: 'Limboto', lat: 0.6360, lng: 122.9860 },
-
-  // Kecamatan Batudaa
   'barakati': { kec: 'Batudaa', lat: 0.5960, lng: 122.9100 },
   'bua': { kec: 'Batudaa', lat: 0.5970, lng: 122.9110 },
   'huntu': { kec: 'Batudaa', lat: 0.5980, lng: 122.9120 },
@@ -119,7 +106,6 @@ const ARUS = {
         deskripsi: 'Dari Kota Gorontalo → Jl. A.A. Wahab (Telaga) → belok kanan Jl. Pilohayanga (depan Muraa Supermarket) → belok kiri Jl. GORR → lurus ke Lokasi Ketupat (Kampung Jawa)',
         asal: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
         tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
-        via: [{ nama: 'Jl. A.A. Wahab - Telaga', lat: 0.5780, lng: 123.0100 }, { nama: 'Jl. GORR', lat: 0.6200, lng: 122.9600 }],
       },
       {
         id: 'menuju_2',
@@ -127,7 +113,6 @@ const ARUS = {
         deskripsi: 'Dari Kota Gorontalo → Jl. A.A. Wahab (Telaga–Limboto) → belok kiri Jl. Reformasi (arah Danau Limboto) → lurus Simpang 4 Patung Berdoa (Hunggaluwa) → Jl. Trans Sulawesi → Tugu Ketupat (Kampung Jawa)',
         asal: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
         tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
-        via: [{ nama: 'Simpang 4 Patung Berdoa', lat: 0.6201, lng: 122.9765 }],
       },
       {
         id: 'menuju_3',
@@ -135,7 +120,6 @@ const ARUS = {
         deskripsi: 'Dari Kota Gorontalo → Dembe–Lekobalo → Jl. Batudaa → belok kanan Simpang 3 Pasar Bongomeme → lurus sampai Tugu Tani Isimu',
         asal: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
         tujuan: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
-        via: [{ nama: 'Pasar Bongomeme', lat: 0.6041, lng: 122.8861 }],
       },
     ],
   },
@@ -148,7 +132,6 @@ const ARUS = {
         deskripsi: 'Dari Tugu Tani Isimu → Jl. Trans Sulawesi → Tugu Ketupat Yosonegoro → belok kiri Jl. Amal Modjo (Daenaa) → belok kanan Jl. GORR → Kota Gorontalo',
         asal: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
-        via: [{ nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 }, { nama: 'Jl. GORR', lat: 0.6200, lng: 122.9600 }],
       },
       {
         id: 'balik_2',
@@ -156,7 +139,6 @@ const ARUS = {
         deskripsi: 'Dari Tugu Ketupat → lurus Jl. Pulubuhu → lurus ke Limboto → Kota Gorontalo',
         asal: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
-        via: [{ nama: 'Menara Limboto', lat: 0.6270, lng: 122.9799 }],
       },
       {
         id: 'balik_3',
@@ -164,7 +146,6 @@ const ARUS = {
         deskripsi: 'Dari Lokasi Ketupat → Jl. Trans Sulawesi (Yosonegoro–Hutabohu–Tenilo–Bolihuangga) → Jl. Reformasi → belok kanan Jl. A.A. Wahab → Kota Gorontalo',
         asal: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
-        via: [{ nama: 'Simpang 4 Patung Berdoa', lat: 0.6201, lng: 122.9765 }],
       },
       {
         id: 'balik_4',
@@ -172,7 +153,6 @@ const ARUS = {
         deskripsi: 'Dari Tugu Tani Isimu → arah Bongomeme → belok kiri Simpang 3 Pasar Bongomeme → Jl. Batudaa → Kota Gorontalo',
         asal: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
-        via: [{ nama: 'Pasar Bongomeme', lat: 0.6041, lng: 122.8861 }],
       },
     ],
   },
@@ -185,7 +165,6 @@ const ARUS = {
         deskripsi: 'Jalur prioritas ambulance & masyarakat menuju Bandara Djalaludin → diarahkan lewat Jl. GORR',
         asal: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
         tujuan: { id: 'bandara', nama: 'Bandara Djalaludin', lat: 0.6373, lng: 122.8481 },
-        via: [{ nama: 'Jl. GORR', lat: 0.6200, lng: 122.9600 }],
       },
     ],
   },
@@ -220,13 +199,13 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     setSelectedArus(arusKey)
     setStep(STEP.ALTERNATIF)
     addMessage('user', ARUS[arusKey].label)
-    addMessage('assistant', `Pilih alternatif rute:`)
+    addMessage('assistant', 'Pilih alternatif rute:')
   }
 
   const handlePilihAlternatif = async (alt) => {
     setStep(STEP.RUTE)
     addMessage('user', alt.label)
-    addMessage('assistant', `⏳ Memuat rute...`)
+    addMessage('assistant', '⏳ Memuat rute...')
     setLoadingRute(true)
 
     if (onZoomLocation) onZoomLocation(alt.tujuan)
@@ -265,49 +244,31 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
   }
 
   const handleInputSend = () => {
-  const msg = input.trim()
-  if (!msg) return
-  setInput('')
-  addMessage('user', msg)
-  const msgLower = msg.toLowerCase()
+    const msg = input.trim()
+    if (!msg) return
+    setInput('')
+    addMessage('user', msg)
+    const msgLower = msg.toLowerCase()
 
-  if (msgLower.includes('ulang') || msgLower.includes('kembali') || msgLower.includes('reset')) {
-    reset(); return
-  }
-
-  if (KONTEKS_LAIN.some(k => msgLower.includes(k))) {
-    addMessage('assistant', '📲 Untuk informasi medis, pengamanan, event, dan info lainnya,\nsilakan kunjungi:\n\n👉 Instagram: @gorontalo.unite')
-    return
-  }
-
-  // ✅ Cek nama desa dulu
-  const desaKey = Object.keys(DESA).find(d => msgLower.includes(d))
-  if (desaKey) {
-    const desa = DESA[desaKey]
-    if (onZoomLocation) onZoomLocation({ lat: desa.lat, lng: desa.lng })
-    addMessage('assistant', `🗺️ Peta sudah di-zoom ke Desa *${desaKey.charAt(0).toUpperCase() + desaKey.slice(1)}*, Kec. ${desa.kec}.\n\nCek kondisi lalu lintas di peta di bawah ya! 👇`)
-    return
-  }
-
-  // Cek lokasi utama
-  const lokasiDisebut = LOKASI.find(l =>
-    msgLower.includes(l.nama.toLowerCase().split(' ')[1] || l.nama.toLowerCase().split(' ')[0])
-  )
-  if (lokasiDisebut && onZoomLocation) {
-    onZoomLocation(lokasiDisebut)
-    addMessage('assistant', `🗺️ Peta sudah di-zoom ke *${lokasiDisebut.nama}*.\nCek kondisi di peta di bawah ya! 👇`)
-    return
-  }
-
-  addMessage('assistant', '🚦 Maaf, saya hanya bisa bantu info rute lalu lintas.\n\nMau pilih rute baru?')
-  setTimeout(() => reset(), 1500)
-}
+    if (msgLower.includes('ulang') || msgLower.includes('kembali') || msgLower.includes('reset')) {
+      reset(); return
+    }
 
     if (KONTEKS_LAIN.some(k => msgLower.includes(k))) {
       addMessage('assistant', '📲 Untuk informasi medis, pengamanan, event, dan info lainnya,\nsilakan kunjungi:\n\n👉 Instagram: @gorontalo.unite')
       return
     }
 
+    // Cek nama desa dulu
+    const desaKey = Object.keys(DESA).find(d => msgLower.includes(d))
+    if (desaKey) {
+      const desa = DESA[desaKey]
+      if (onZoomLocation) onZoomLocation({ lat: desa.lat, lng: desa.lng })
+      addMessage('assistant', `🗺️ Peta sudah di-zoom ke Desa *${desaKey.charAt(0).toUpperCase() + desaKey.slice(1)}*, Kec. ${desa.kec}.\n\nCek kondisi lalu lintas di peta di bawah ya! 👇`)
+      return
+    }
+
+    // Cek lokasi utama
     const lokasiDisebut = LOKASI.find(l =>
       msgLower.includes(l.nama.toLowerCase().split(' ')[1] || l.nama.toLowerCase().split(' ')[0])
     )

@@ -102,21 +102,21 @@ const ARUS = {
     alternatif: [
       {
         id: 'menuju_1',
-        label: 'Alternatif 1',
+        label: 'Lewat GORR',
         deskripsi: 'Dari Kota Gorontalo → Jl. A.A. Wahab (Telaga) → belok kanan Jl. Pilohayanga (depan Muraa Supermarket) → belok kiri Jl. GORR → lurus ke Lokasi Ketupat (Kampung Jawa)',
         asal: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
         tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
       },
       {
         id: 'menuju_2',
-        label: 'Alternatif 2',
+        label: 'Lewat Jl. Reformasi',
         deskripsi: 'Dari Kota Gorontalo → Jl. A.A. Wahab (Telaga–Limboto) → belok kiri Jl. Reformasi (arah Danau Limboto) → lurus Simpang 4 Patung Berdoa (Hunggaluwa) → Jl. Trans Sulawesi → Tugu Ketupat (Kampung Jawa)',
         asal: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
         tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
       },
       {
         id: 'menuju_3',
-        label: 'Alternatif 3',
+        label: 'Lewat Batudaa–Bongomeme',
         deskripsi: 'Dari Kota Gorontalo → Dembe–Lekobalo → Jl. Batudaa → belok kanan Simpang 3 Pasar Bongomeme → lurus sampai Tugu Tani Isimu',
         asal: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
         tujuan: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
@@ -128,28 +128,28 @@ const ARUS = {
     alternatif: [
       {
         id: 'balik_1',
-        label: 'Alternatif 1',
+        label: 'Isimu → Kota via GORR',
         deskripsi: 'Dari Tugu Tani Isimu → Jl. Trans Sulawesi → Tugu Ketupat Yosonegoro → belok kiri Jl. Amal Modjo (Daenaa) → belok kanan Jl. GORR → Kota Gorontalo',
         asal: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
       },
       {
         id: 'balik_2',
-        label: 'Alternatif 2',
+        label: 'Kampung Jawa → Kota via Pulubuhu',
         deskripsi: 'Dari Tugu Ketupat → lurus Jl. Pulubuhu → lurus ke Limboto → Kota Gorontalo',
         asal: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
       },
       {
         id: 'balik_3',
-        label: 'Alternatif 3 (ab 16.00 WITA)',
-        deskripsi: 'Dari Lokasi Ketupat → Jl. Trans Sulawesi (Yosonegoro–Hutabohu–Tenilo–Bolihuangga) → Jl. Reformasi → belok kanan Jl. A.A. Wahab → Kota Gorontalo',
+        label: 'Kampung Jawa → Kota via Reformasi (16.00 WITA)',
+        deskripsi: 'Dari Lokasi Ketupat → Jl. Trans Sulawesi (Yosonegoro–Hutabohu–Tenilo–Bolihuangga) → Jl. Reformasi → belok kanan Jl. A.A. Wahab → Kota Gorontalo. Berlaku mulai pukul 16.00 WITA.',
         asal: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
       },
       {
         id: 'balik_4',
-        label: 'Alternatif 4',
+        label: 'Isimu → Kota via Batudaa',
         deskripsi: 'Dari Tugu Tani Isimu → arah Bongomeme → belok kiri Simpang 3 Pasar Bongomeme → Jl. Batudaa → Kota Gorontalo',
         asal: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
         tujuan: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
@@ -161,7 +161,7 @@ const ARUS = {
     alternatif: [
       {
         id: 'prioritas_1',
-        label: 'Menuju Bandara via Jl. GORR',
+        label: 'Ambulance & Bandara via Jl. GORR',
         deskripsi: 'Jalur prioritas ambulance & masyarakat menuju Bandara Djalaludin → diarahkan lewat Jl. GORR',
         asal: { id: 'pelabuhan', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
         tujuan: { id: 'bandara', nama: 'Bandara Djalaludin', lat: 0.6373, lng: 122.8481 },
@@ -175,6 +175,7 @@ const STEP = { ARAH: 'arah', ALTERNATIF: 'alternatif', RUTE: 'rute' }
 export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
   const [step, setStep] = useState(STEP.ARAH)
   const [selectedArus, setSelectedArus] = useState(null)
+  const [selectedAltId, setSelectedAltId] = useState(null)
   const [messages, setMessages] = useState([
     { role: 'assistant', text: '🗺️ Halo! Selamat datang di Info Lalu Lintas Kab. Gorontalo.\n\nHari ini mau kemana?' }
   ])
@@ -190,6 +191,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
   const reset = () => {
     setStep(STEP.ARAH)
     setSelectedArus(null)
+    setSelectedAltId(null)
     addMessage('assistant', '↩️ Oke, mulai ulang ya.\n\nHari ini mau kemana?')
   }
 
@@ -202,6 +204,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
 
   const handlePilihAlternatif = async (alt) => {
     setStep(STEP.RUTE)
+    setSelectedAltId(alt.id)
     addMessage('user', alt.label)
     addMessage('assistant', '⏳ Memuat rute...')
     setLoadingRute(true)
@@ -237,6 +240,14 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
       })
     } finally {
       setLoadingRute(false)
+    }
+  }
+
+  const handleBukaMaps = () => {
+    if (!selectedArus || !selectedAltId) return
+    const alt = ARUS[selectedArus]?.alternatif.find(a => a.id === selectedAltId)
+    if (alt?.tujuan) {
+      window.open(`https://www.google.com/maps/search/?api=1&query=${alt.tujuan.lat},${alt.tujuan.lng}`, '_blank')
     }
   }
 
@@ -311,7 +322,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
         {/* Step: Pilih Alternatif — button kecil */}
         {step === STEP.ALTERNATIF && selectedArus && (
           <div className="px-4 pb-4">
-            <p className="text-xs text-gray-600 font-mono mb-2">🛣️ Pilih alternatif:</p>
+            <p className="text-xs text-gray-600 font-mono mb-2">🛣️ Pilih rute:</p>
             <div className="flex flex-wrap gap-2">
               {ARUS[selectedArus].alternatif.map(alt => (
                 <button
@@ -337,11 +348,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
                 🔄 Pilih Rute Lain
               </button>
               <button
-                onClick={() => {
-                  const alt = Object.values(ARUS).flatMap(a => a.alternatif).find(a => a.id === selectedArus)
-                  const tujuan = alt?.tujuan
-                  if (tujuan) window.open(`https://www.google.com/maps/search/?api=1&query=${tujuan.lat},${tujuan.lng}`, '_blank')
-                }}
+                onClick={handleBukaMaps}
                 className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
               >
                 🗺️ Buka di Maps

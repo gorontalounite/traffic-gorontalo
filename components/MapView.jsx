@@ -1,12 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { KECAMATAN_LIST } from '../lib/supabase'
 
 const MAP_CENTER = { lat: 0.6284, lng: 122.8918 }
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
-export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget }) { // ✅ BARU: zoomTarget
+export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget, routeData }) {
+  const mapRef = useRef(null)
+  const mapInstanceRef = useRef(null)
+  const directionsRendererRef = useRef(null)
   const [mapType, setMapType] = useState('roadmap')
+  const [mapsLoaded, setMapsLoaded] = useState(false)
   const hasApiKey = API_KEY && API_KEY !== 'YOUR_GOOGLE_MAPS_API_KEY_HERE'
+
+  const statusColor = { lancar: '#00e676', padat: '#ffea00', macet: '#ff1744' }
 
   const getKecStatus = (kecId) => {
     if (!reports || reports.length === 0) return null
@@ -14,40 +20,78 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget 
     return found ? found.status : null
   }
 
-  const statusColor = { lancar: '#00e676', padat: '#ffea00', macet: '#ff1744' }
+  // Load Google Maps JS API sekali
+  useEffect(() => {
+    if (!hasApiKey) return
+    if (window.google?.maps) { setMapsLoaded(true); return }
 
-  const buildMapUrl = () => {
-    // ✅ BARU: Prioritas zoomTarget dari chat > selectedKec > default
-    let lat, lng, zoom
+    const script = document.createElement('script')
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=geometry`
+    script.async = true
+    script.onload = () => setMapsLoaded(true)
+    document.head.appendChild(script)
+  }, [])
 
-    if (zoomTarget) {
-      lat = zoomTarget.lat
-      lng = zoomTarget.lng
-      zoom = 16
-    } else if (selectedKec) {
-      const center = KECAMATAN_LIST.find((k) => k.id === selectedKec)
-      lat = center?.lat || MAP_CENTER.lat
-      lng = center?.lng || MAP_CENTER.lng
-      zoom = 15
-    } else {
-      lat = MAP_CENTER.lat
-      lng = MAP_CENTER.lng
-      zoom = 13
-    }
+  // Init peta setelah API loaded
+  useEffect(() => {
+    if (!mapsLoaded || !mapRef.current || mapInstanceRef.current) return
 
-    if (hasApiKey) {
-      return `https://www.google.com/maps/embed/v1/view?key=${API_KEY}&center=${lat},${lng}&zoom=${zoom}&maptype=${mapType}`
-    }
+    mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
+      center: MAP_CENTER,
+      zoom: 13,
+      mapTypeId: mapType,
+      disableDefaultUI: false,
+      zoomControl: true,
+      streetViewControl: false,
+      fullscreenControl: false,
+      mapTypeControl: false,
+    })
 
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.08}%2C${lat - 0.06}%2C${lng + 0.08}%2C${lat + 0.06}&layer=mapnik&marker=${lat}%2C${lng}`
-  }
+    directionsRendererRef.current = new window.google.maps.DirectionsRenderer({
+      suppressMarkers: false,
+      polylineOptions: {
+        strokeColor: '#00e676',
+        strokeWeight: 5,
+        strokeOpacity: 0.9,
+      },
+    })
+    directionsRendererRef.current.setMap(mapInstanceRef.current)
+  }, [mapsLoaded])
+
+  // Update mapType
+  useEffect(() => {
+    if (!mapInstanceRef.current) return
+    mapInstanceRef.current.setMapTypeId(mapType)
+  }, [mapType])
+
+  // Zoom ke target kalau ada
+  useEffect(() => {
+    if (!mapInstanceRef.current || !zoomTarget) return
+    mapInstanceRef.current.panTo({ lat: zoomTarget.lat, lng: zoomTarget.lng })
+    mapInstanceRef.current.setZoom(16)
+  }, [zoomTarget])
+
+  // Tampilkan rute kalau ada routeData
+  useEffect(() => {
+    if (!mapInstanceRef.current || !directionsRendererRef.current || !routeData) return
+
+    const directionsService = new window.google.maps.DirectionsService()
+    directionsService.route({
+      origin: { lat: routeData.asal.lat, lng: routeData.asal.lng },
+      destination: { lat: routeData.tujuan.lat, lng: routeData.tujuan.lng },
+      travelMode: window.google.maps.TravelMode.DRIVING,
+    }, (result, status) => {
+      if (status === 'OK') {
+        directionsRendererRef.current.setDirections(result)
+      }
+    })
+  }, [routeData])
 
   const openFullMap = () => {
-    // ✅ BARU: pakai zoomTarget kalau ada
     const target = zoomTarget || (selectedKec ? KECAMATAN_LIST.find((k) => k.id === selectedKec) : null)
     const lat = target?.lat || MAP_CENTER.lat
     const lng = target?.lng || MAP_CENTER.lng
-    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}&layer=transit`, '_blank')
+    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank')
   }
 
   return (
@@ -56,11 +100,12 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget 
         <p className="text-xs text-gray-500 font-mono uppercase tracking-widest">Peta Lalu Lintas</p>
         {!hasApiKey && (
           <span className="text-xs bg-signal-yellow/10 text-signal-yellow border border-signal-yellow/20 rounded-full px-2.5 py-0.5 font-mono">
-            OpenStreetMap Mode
+            No API Key
           </span>
         )}
       </div>
 
+      {/* Kecamatan selector */}
       <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3">
         <button
           onClick={() => onSelectKec(null)}
@@ -76,7 +121,13 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget 
           return (
             <button
               key={kec.id}
-              onClick={() => onSelectKec(kec.id === selectedKec ? null : kec.id)}
+              onClick={() => {
+                onSelectKec(kec.id === selectedKec ? null : kec.id)
+                if (mapInstanceRef.current && kec.lat) {
+                  mapInstanceRef.current.panTo({ lat: kec.lat, lng: kec.lng })
+                  mapInstanceRef.current.setZoom(14)
+                }
+              }}
               className={`flex-shrink-0 flex items-center gap-1.5 text-xs rounded-full px-3 py-1.5 border transition-all font-mono whitespace-nowrap ${
                 selectedKec === kec.id ? 'bg-asphalt-600 border-asphalt-500 text-gray-200' : 'bg-asphalt-800 border-asphalt-600 text-gray-500 hover:text-gray-300'
               }`}
@@ -88,18 +139,20 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget 
         })}
       </div>
 
+      {/* Map container */}
       <div className="rounded-2xl overflow-hidden border border-asphalt-600 relative">
-        <iframe
-          src={buildMapUrl()}
-          width="100%"
-          height="300"
-          style={{ border: 0, display: 'block' }}
-          allowFullScreen=""
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          title="Peta Lalu Lintas Kabupaten Gorontalo"
-        />
+        {hasApiKey ? (
+          <div ref={mapRef} style={{ width: '100%', height: '300px' }} />
+        ) : (
+          <iframe
+            src={`https://www.openstreetmap.org/export/embed.html?bbox=${MAP_CENTER.lng - 0.08}%2C${MAP_CENTER.lat - 0.06}%2C${MAP_CENTER.lng + 0.08}%2C${MAP_CENTER.lat + 0.06}&layer=mapnik`}
+            width="100%" height="300"
+            style={{ border: 0, display: 'block' }}
+            title="Peta Lalu Lintas"
+          />
+        )}
 
+        {/* Controls */}
         <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
           {hasApiKey && (
             <button
@@ -117,6 +170,7 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget 
           </button>
         </div>
 
+        {/* Legend */}
         {hasApiKey && (
           <div className="absolute top-3 left-3">
             <div className="bg-asphalt-800/90 backdrop-blur border border-asphalt-600 rounded-lg px-2.5 py-1.5">
@@ -129,12 +183,6 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget 
           </div>
         )}
       </div>
-
-      {!hasApiKey && (
-        <p className="text-xs text-gray-600 mt-2 text-center font-mono">
-          Tambahkan Google Maps API key untuk traffic layer real-time
-        </p>
-      )}
     </div>
   )
 }

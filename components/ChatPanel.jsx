@@ -1,23 +1,23 @@
 import { useState, useRef, useEffect } from 'react'
 
 const LOKASI = [
-  { id: 'tugu_ketupat',    nama: 'Tugu Ketupat Yosonegoro',  lat: 0.6381, lng: 122.9266 },
-  { id: 'tugu_tani',       nama: 'Patung Saronde Isimu',      lat: 0.6422, lng: 122.8456 },
-  { id: 'menara_limboto',  nama: 'Menara Limboto',            lat: 0.6270, lng: 122.9799 },
-  { id: 'patung_berdoa',   nama: 'Simpang 4 Patung Berdoa',   lat: 0.6201, lng: 122.9765 },
-  { id: 'habibie',         nama: 'Monumen B.J. Habibie',      lat: 0.6497, lng: 122.8449 },
-  { id: 'pasar_bongomeme', nama: 'Pasar Bongomeme',           lat: 0.6041, lng: 122.8861 },
-  { id: 'polsek_tibawa',   nama: 'Polsek Tibawa',             lat: 0.6435, lng: 122.8617 },
-  { id: 'bandara',         nama: 'Bandara Djalaludin',        lat: 0.6373, lng: 122.8481 },
-  { id: 'pelabuhan',       nama: 'Pelabuhan Kota Gorontalo',  lat: 0.5093, lng: 123.0633 },
-  { id: 'kantor_bupati',   nama: 'Kantor Bupati Kab. Gorontalo', lat: 0.6293, lng: 122.9800 },
+  { id: 'tugu_ketupat',    nama: 'Tugu Ketupat Yosonegoro',      lat: 0.6381, lng: 122.9266 },
+  { id: 'tugu_tani',       nama: 'Patung Saronde Isimu',          lat: 0.6422, lng: 122.8456 },
+  { id: 'menara_limboto',  nama: 'Menara Limboto',                lat: 0.6270, lng: 122.9799 },
+  { id: 'patung_berdoa',   nama: 'Simpang 4 Patung Berdoa',       lat: 0.6201, lng: 122.9765 },
+  { id: 'habibie',         nama: 'Monumen B.J. Habibie',          lat: 0.6497, lng: 122.8449 },
+  { id: 'pasar_bongomeme', nama: 'Pasar Bongomeme',               lat: 0.6041, lng: 122.8861 },
+  { id: 'polsek_tibawa',   nama: 'Polsek Tibawa',                 lat: 0.6435, lng: 122.8617 },
+  { id: 'bandara',         nama: 'Bandara Djalaludin',            lat: 0.6373, lng: 122.8481 },
+  { id: 'pelabuhan',       nama: 'Pelabuhan Kota Gorontalo',      lat: 0.5093, lng: 123.0633 },
+  { id: 'kantor_bupati',   nama: 'Kantor Bupati Kab. Gorontalo',  lat: 0.6293, lng: 122.9800 },
 ]
 
 const KONTEKS_LAIN = ['medis','kesehatan','rumah sakit','polisi','pengamanan','event','acara','info','berita','wisata','hotel','makan','restoran']
 
 const STEP = { TUJUAN: 'tujuan', ASAL: 'asal', RUTE: 'rute' }
 
-export default function ChatPanel({ reports, onZoomLocation }) {
+export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
   const [step, setStep] = useState(STEP.TUJUAN)
   const [tujuan, setTujuan] = useState(null)
   const [asal, setAsal] = useState(null)
@@ -32,9 +32,7 @@ export default function ChatPanel({ reports, onZoomLocation }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [messages])
 
-  const addMessage = (role, text) => {
-    setMessages(prev => [...prev, { role, text }])
-  }
+  const addMessage = (role, text) => setMessages(prev => [...prev, { role, text }])
 
   const reset = () => {
     setStep(STEP.TUJUAN)
@@ -61,8 +59,8 @@ export default function ChatPanel({ reports, onZoomLocation }) {
     addMessage('assistant', `⏳ Mencari rute dari *${lokasi.nama}* ke *${tujuan.nama}*...`)
     setLoadingRute(true)
 
-    // Zoom Maps ke titik tujuan
     if (onZoomLocation) onZoomLocation(tujuan)
+    if (onRouteFound) onRouteFound({ asal: lokasi, tujuan }) // ✅ kirim routeData ke MapView
 
     try {
       const res = await fetch('/api/rute', {
@@ -73,13 +71,11 @@ export default function ChatPanel({ reports, onZoomLocation }) {
       const data = await res.json()
       if (data.error) throw new Error(data.error)
 
-      // Update pesan loading dengan hasil rute
       setMessages(prev => {
         const updated = [...prev]
         updated[updated.length - 1] = {
           role: 'assistant',
           text: `🛣️ *Rute: ${lokasi.nama} → ${tujuan.nama}*\n\n${data.ringkasan}\n\n⏱️ Estimasi: ${data.durasi} | 📏 Jarak: ${data.jarak}`,
-          rute: data,
         }
         return updated
       })
@@ -103,44 +99,34 @@ export default function ChatPanel({ reports, onZoomLocation }) {
     if (!msg) return
     setInput('')
     addMessage('user', msg)
-
     const msgLower = msg.toLowerCase()
 
-    // Cek apakah minta ulang
     if (msgLower.includes('ulang') || msgLower.includes('kembali') || msgLower.includes('reset')) {
-      reset()
-      return
+      reset(); return
     }
 
-    // Cek konteks lain (medis, event, dll)
     if (KONTEKS_LAIN.some(k => msgLower.includes(k))) {
-      addMessage('assistant', '📲 Untuk informasi medis, pengamanan, event, dan info lainnya,\nsilakan hubungi atau kunjungi:\n\n👉 Instagram: @gorontalo.unite')
+      addMessage('assistant', '📲 Untuk informasi medis, pengamanan, event, dan info lainnya,\nsilakan kunjungi:\n\n👉 Instagram: @gorontalo.unite')
       return
     }
 
-    // Cek apakah tanya kondisi titik tertentu
-    const lokasiDisebut = LOKASI.find(l => msgLower.includes(l.nama.toLowerCase().split(' ')[1] || l.nama.toLowerCase().split(' ')[0]))
+    const lokasiDisebut = LOKASI.find(l =>
+      msgLower.includes(l.nama.toLowerCase().split(' ')[1] || l.nama.toLowerCase().split(' ')[0])
+    )
     if (lokasiDisebut && onZoomLocation) {
       onZoomLocation(lokasiDisebut)
       addMessage('assistant', `🗺️ Peta sudah di-zoom ke *${lokasiDisebut.nama}*.\nCek kondisi lalu lintas di peta di bawah ya! 👇`)
       return
     }
 
-    // Default: kembali ke pilihan
     addMessage('assistant', '🚦 Maaf, saya hanya bisa bantu info rute lalu lintas.\n\nMau pilih rute baru?')
-    setTimeout(() => {
-      reset()
-    }, 1500)
+    setTimeout(() => reset(), 1500)
   }
 
   const handleKey = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleInputSend()
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleInputSend() }
   }
 
-  // Lokasi untuk pilihan asal (exclude tujuan yang sudah dipilih)
   const lokasiAsal = LOKASI.filter(l => l.id !== tujuan?.id)
 
   return (
@@ -197,7 +183,7 @@ export default function ChatPanel({ reports, onZoomLocation }) {
         {(step === STEP.TUJUAN || step === STEP.ASAL) && (
           <div className="px-4 pb-3">
             <p className="text-xs text-gray-600 font-mono mb-2">
-              {step === STEP.TUJUAN ? '🎯 Pilih tujuan:' : '📍 Pilih asal:'}
+              {step === STEP.TUJUAN ? '🎯 Pilih tujuan:' : '📍 Pilih asal keberangkatan:'}
             </p>
             <div className="grid grid-cols-2 gap-1.5">
               {(step === STEP.TUJUAN ? LOKASI : lokasiAsal).map(l => (
@@ -213,7 +199,7 @@ export default function ChatPanel({ reports, onZoomLocation }) {
           </div>
         )}
 
-        {/* Input teks (setelah rute ditampilkan) */}
+        {/* Input teks setelah rute */}
         {step === STEP.RUTE && !loadingRute && (
           <div className="px-4 pb-4 pt-2">
             <div className="flex gap-2 items-center bg-asphalt-700 border border-asphalt-600 focus-within:border-asphalt-500 rounded-xl px-3 py-2 transition-colors">

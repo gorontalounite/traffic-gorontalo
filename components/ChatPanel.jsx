@@ -364,12 +364,13 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
               >
                 🔄 Pilih Rute Lain
               </button>
-              
+              <a
                 href="/peta"
                 className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono text-center"
-              <a>
+              >
                 🗺️ Peta Penuh
               </a>
+                
               <button
                 onClick={handleBukaMaps}
                 className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"

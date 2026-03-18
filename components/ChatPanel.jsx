@@ -250,14 +250,25 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
   }
 
   const handleSubmitTujuan = () => {
-    const val = inputTujuan.trim()
-    if (!val) return
-    addMsg('user', val)
-    setInputTujuan('')
-    addMsg('assistant', `📍 Berikut 4 alternatif arus balik menuju *${val}*:`)
-    setRutePilihan(RUTE_BALIK)
+  const val = inputTujuan.trim()
+  if (!val) return
+  addMsg('user', val)
+  setInputTujuan('')
+
+  // Cek apakah tujuan terdeteksi sebagai wilayah Trans Sulawesi
+  const q = val.toLowerCase()
+  if (KAB_TRANS_SULAWESI.some(w => q.includes(w))) {
+    addMsg('assistant', `📍 Tujuan *${val}* berada di jalur Trans Sulawesi.\n\nDisarankan keluar via Tugu Tani Isimu → Jl. Trans Sulawesi langsung ke arah tujuan.`)
+    setRutePilihan([RUTE_MENUJU.trans_sulawesi[0]])
     setStep(STEP.ALTERNATIF)
+    return
   }
+
+  // Default: tampilkan semua 4 alternatif
+  addMsg('assistant', `📍 Berikut 4 alternatif arus balik menuju *${val}*:`)
+  setRutePilihan(RUTE_BALIK)
+  setStep(STEP.ALTERNATIF)
+}
 
   const handlePilihRute = async (rute) => {
     setStep(STEP.RUTE)

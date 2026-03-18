@@ -28,8 +28,6 @@ export default function Dashboard() {
   const [bulkResults, setBulkResults] = useState([])
   const [bulkLoading, setBulkLoading] = useState(false)
   const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0 })
-
-  // Embed posts state
   const [embedForm, setEmbedForm] = useState({ url: '', caption: '', platform: 'instagram' })
   const [embedSaving, setEmbedSaving] = useState(false)
   const [embedSaved, setEmbedSaved] = useState(false)
@@ -192,6 +190,53 @@ export default function Dashboard() {
 
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
 
+          {/* ✅ Embed Posts Section — PALING ATAS */}
+          <div className="bg-asphalt-800 border border-asphalt-600 rounded-2xl p-5 space-y-4">
+            <h2 className="font-display font-600 text-sm text-gray-200">📱 Tambah Post Media Sosial / Berita</h2>
+            <div>
+              <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Platform</label>
+              <div className="flex gap-2 flex-wrap">
+                {['instagram', 'tiktok', 'berita', 'lainnya'].map(p => (
+                  <button key={p} onClick={() => setEmbedForm({ ...embedForm, platform: p })}
+                    className={`text-xs px-3 py-1.5 rounded-full border font-mono transition-all ${embedForm.platform === p ? 'bg-asphalt-600 border-asphalt-500 text-gray-200' : 'bg-asphalt-700 border-asphalt-600 text-gray-500'}`}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">URL</label>
+              <input value={embedForm.url} onChange={e => setEmbedForm({ ...embedForm, url: e.target.value })}
+                placeholder="https://www.instagram.com/p/..." className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600" />
+            </div>
+            <div>
+              <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Caption (opsional)</label>
+              <input value={embedForm.caption} onChange={e => setEmbedForm({ ...embedForm, caption: e.target.value })}
+                placeholder="Contoh: Kondisi Jl. Trans Sulawesi pagi ini..." className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600" />
+            </div>
+            <button onClick={handleEmbedSave} disabled={embedSaving || embedSaved || !embedForm.url.trim()}
+              className={`w-full rounded-xl py-3 text-sm font-display font-600 transition-all ${embedSaved ? 'bg-signal-green/20 border border-signal-green/30 text-signal-green' : 'bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 disabled:opacity-40'}`}>
+              {embedSaved ? '✓ Tersimpan!' : embedSaving ? 'Menyimpan...' : 'Simpan Post'}
+            </button>
+            {embedPosts.length > 0 && (
+              <div className="space-y-2 pt-2">
+                <p className="text-xs text-gray-600 font-mono">{embedPosts.length} post tersimpan</p>
+                {embedPosts.map(post => (
+                  <div key={post.id} className="flex items-center justify-between gap-3 bg-asphalt-700 border border-asphalt-600 rounded-xl px-3 py-2.5">
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs font-mono text-gray-500">{post.platform}</span>
+                      <p className="text-xs text-gray-300 truncate">{post.caption || post.url}</p>
+                    </div>
+                    <button onClick={() => handleEmbedDelete(post.id)}
+                      className="text-xs bg-signal-red/10 hover:bg-signal-red/20 border border-signal-red/20 text-signal-red rounded-lg px-2.5 py-1 transition-all flex-shrink-0">
+                      Hapus
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Knowledge Base Form */}
           <div className="bg-asphalt-800 border border-asphalt-600 rounded-2xl p-5 space-y-4">
             <div className="flex items-center justify-between flex-wrap gap-2">
@@ -298,53 +343,6 @@ export default function Dashboard() {
                 })}
               </div>
             }
-          </div>
-
-          {/* Embed Posts Section */}
-          <div className="bg-asphalt-800 border border-asphalt-600 rounded-2xl p-5 space-y-4">
-            <h2 className="font-display font-600 text-sm text-gray-200">📱 Tambah Post Media Sosial / Berita</h2>
-            <div>
-              <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Platform</label>
-              <div className="flex gap-2 flex-wrap">
-                {['instagram', 'tiktok', 'berita', 'lainnya'].map(p => (
-                  <button key={p} onClick={() => setEmbedForm({ ...embedForm, platform: p })}
-                    className={`text-xs px-3 py-1.5 rounded-full border font-mono transition-all ${embedForm.platform === p ? 'bg-asphalt-600 border-asphalt-500 text-gray-200' : 'bg-asphalt-700 border-asphalt-600 text-gray-500'}`}>
-                    {p}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">URL</label>
-              <input value={embedForm.url} onChange={e => setEmbedForm({ ...embedForm, url: e.target.value })}
-                placeholder="https://www.instagram.com/p/..." className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600" />
-            </div>
-            <div>
-              <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Caption (opsional)</label>
-              <input value={embedForm.caption} onChange={e => setEmbedForm({ ...embedForm, caption: e.target.value })}
-                placeholder="Contoh: Kondisi Jl. Trans Sulawesi pagi ini..." className="w-full bg-asphalt-700 border border-asphalt-600 text-gray-200 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-asphalt-500 transition-colors placeholder-gray-600" />
-            </div>
-            <button onClick={handleEmbedSave} disabled={embedSaving || embedSaved || !embedForm.url.trim()}
-              className={`w-full rounded-xl py-3 text-sm font-display font-600 transition-all ${embedSaved ? 'bg-signal-green/20 border border-signal-green/30 text-signal-green' : 'bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 disabled:opacity-40'}`}>
-              {embedSaved ? '✓ Tersimpan!' : embedSaving ? 'Menyimpan...' : 'Simpan Post'}
-            </button>
-            {embedPosts.length > 0 && (
-              <div className="space-y-2 pt-2">
-                <p className="text-xs text-gray-600 font-mono">{embedPosts.length} post tersimpan</p>
-                {embedPosts.map(post => (
-                  <div key={post.id} className="flex items-center justify-between gap-3 bg-asphalt-700 border border-asphalt-600 rounded-xl px-3 py-2.5">
-                    <div className="flex-1 min-w-0">
-                      <span className="text-xs font-mono text-gray-500">{post.platform}</span>
-                      <p className="text-xs text-gray-300 truncate">{post.caption || post.url}</p>
-                    </div>
-                    <button onClick={() => handleEmbedDelete(post.id)}
-                      className="text-xs bg-signal-red/10 hover:bg-signal-red/20 border border-signal-red/20 text-signal-red rounded-lg px-2.5 py-1 transition-all flex-shrink-0">
-                      Hapus
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
         </main>

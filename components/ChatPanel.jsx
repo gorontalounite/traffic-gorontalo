@@ -363,9 +363,11 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
             <div className="flex gap-2">
               <button onClick={reset} className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
                 🔄 Pilih Rute Lain
-              </button>
+                <a href="/peta" className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono text-center">
+                🗺️ Peta Penuh
+              </a>
               <button onClick={handleBukaMaps} className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
-                🗺️ Buka di Maps
+                ↗️ Buka Maps
               </button>
             </div>
           </div>

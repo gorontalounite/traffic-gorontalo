@@ -85,15 +85,7 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget,
         directionsRendererRef.current.setDirections(result)
       }
     })
-  }, [routeData])
-
-  const openFullMap = () => {
-    const target = zoomTarget || (selectedKec ? KECAMATAN_LIST.find((k) => k.id === selectedKec) : null)
-    const lat = target?.lat || MAP_CENTER.lat
-    const lng = target?.lng || MAP_CENTER.lng
-    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank')
-  }
-
+  }, [routeData, mapsLoaded])
   return (
     <div className="mx-4 mb-4">
       <div className="flex items-center justify-between mb-3">
@@ -162,12 +154,6 @@ export default function MapView({ reports, selectedKec, onSelectKec, zoomTarget,
               {mapType === 'roadmap' ? '🛰️ Satelit' : '🗺️ Jalan'}
             </button>
           )}
-          <button
-            onClick={openFullMap}
-            className="bg-asphalt-800/90 backdrop-blur border border-asphalt-600 text-gray-300 text-xs rounded-lg px-2.5 py-1.5 hover:bg-asphalt-700 transition-all font-mono"
-          >
-            📍 Buka Maps
-          </button>
         </div>
 
         {/* Legend */}

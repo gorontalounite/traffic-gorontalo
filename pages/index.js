@@ -66,20 +66,23 @@ export default function Home() {
         <header className="sticky top-0 z-50 bg-asphalt-900/95 backdrop-blur border-b border-asphalt-700">
           <div className="max-w-lg mx-auto px-4 py-2.5">
             <div className="flex items-center justify-between">
+              {/* Logo kiri */}
               <div className="flex items-center gap-1.5">
                 <Image src="/LogoPoldaGTO.png" alt="Polda Gorontalo" width={34} height={34} className="object-contain" />
                 <Image src="/LogoSatlantas.png" alt="Satlantas" width={30} height={30} className="object-contain" />
               </div>
-              <div className="flex flex-col items-center text-center flex-1 px-2">
-                <p className="text-xs text-gray-600 font-mono leading-tight">
-                  Kab. Gorontalo · Live
-                </p>
-              </div>
+              {/* Logo kanan + toggle */}
               <div className="flex items-center gap-1.5">
                 <Image src="/LogoGorontaloUnite.png" alt="Gorontalo Unite" width={34} height={34} className="object-contain rounded-full" />
                 <ThemeToggle />
               </div>
             </div>
+          </div>
+          {/* Title di bawah logo, di atas divider */}
+          <div className="max-w-lg mx-auto px-4 pb-2.5 text-center">
+            <p className="text-xs font-display font-700 text-gray-300 uppercase tracking-widest">
+              Info Rute Lalu Lintas di Kampung Jawa
+            </p>
           </div>
           <div className="road-divider" />
         </header>

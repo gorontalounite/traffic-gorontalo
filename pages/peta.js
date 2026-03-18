@@ -11,6 +11,14 @@ export default function Peta() {
   const [routeData, setRouteData] = useState(null)
 
   useEffect(() => {
+    const saved = sessionStorage.getItem('peta_rute')
+    if (saved) {
+      try {
+        setRouteData(JSON.parse(saved))
+        sessionStorage.removeItem('peta_rute')
+      } catch (e) {}
+    }
+
     if (!supabase) return
     supabase
       .from('laporan_lalu_lintas')
@@ -27,7 +35,6 @@ export default function Peta() {
       </Head>
 
       <div className="min-h-screen bg-asphalt-900 flex flex-col">
-        {/* Header minimal */}
         <header className="sticky top-0 z-50 bg-asphalt-900/95 backdrop-blur border-b border-asphalt-700">
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
             <p className="text-xs font-display font-700 text-gray-300 uppercase tracking-widest">
@@ -40,7 +47,6 @@ export default function Peta() {
           <div className="road-divider" />
         </header>
 
-        {/* Peta fullscreen */}
         <main className="flex-1 max-w-lg mx-auto w-full pt-4 pb-4">
           <MapView
             reports={reports}

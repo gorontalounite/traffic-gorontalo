@@ -175,6 +175,11 @@ const ARUS = {
 const STEP = { ARAH: 'arah', ALTERNATIF: 'alternatif', RUTE: 'rute' }
 
 export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
+  // Cari baris ini:
+if (onRouteFound) onRouteFound({ asal: alt.asal, tujuan: alt.tujuan })
+
+// Tambahkan TEPAT di bawahnya:
+sessionStorage.setItem('peta_rute', JSON.stringify({ asal: alt.asal, tujuan: alt.tujuan }))
   const [step, setStep] = useState(STEP.ARAH)
   const [selectedArus, setSelectedArus] = useState(null)
   const [selectedAltId, setSelectedAltId] = useState(null)
@@ -250,15 +255,6 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
       setLoadingRute(false)
     }
   }
-
-  const handleBukaMaps = () => {
-    if (!selectedArus || !selectedAltId) return
-    const alt = ARUS[selectedArus]?.alternatif.find(a => a.id === selectedAltId)
-    if (alt?.tujuan) {
-      window.open(`https://www.google.com/maps/search/?api=1&query=${alt.tujuan.lat},${alt.tujuan.lng}`, '_blank')
-    }
-  }
-
   return (
     <div className="mx-4 mb-4">
       <div className="rounded-2xl border border-asphalt-600 bg-asphalt-800 overflow-hidden">
@@ -370,13 +366,6 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
               >
                 🗺️ Peta Penuh
               </a>
-                
-              <button
-                onClick={handleBukaMaps}
-                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono"
-              >
-                ↗️ Buka Maps
-              </button>
             </div>
           </div>
         )}

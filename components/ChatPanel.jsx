@@ -12,6 +12,103 @@ const LOKASI = [
   { id: 'pelabuhan',       nama: 'Pelabuhan Kota Gorontalo',    lat: 0.5093, lng: 123.0633 },
 ]
 
+const DESA = {
+  // Kecamatan Bongomeme
+  'batu loreng': { kec: 'Bongomeme', lat: 0.5949, lng: 122.8659 },
+  'batulayar': { kec: 'Bongomeme', lat: 0.5960, lng: 122.8700 },
+  'bongohulawa': { kec: 'Bongomeme', lat: 0.5980, lng: 122.8720 },
+  'dulamayo': { kec: 'Bongomeme', lat: 0.5930, lng: 122.8600 },
+  'huntulohulawa': { kec: 'Bongomeme', lat: 0.5970, lng: 122.8680 },
+  'kayumerah': { kec: 'Bongomeme', lat: 0.5940, lng: 122.8640 },
+  'liyodu': { kec: 'Bongomeme', lat: 0.5910, lng: 122.8620 },
+  'liyoto': { kec: 'Bongomeme', lat: 0.5920, lng: 122.8630 },
+  'molanihu': { kec: 'Bongomeme', lat: 0.5990, lng: 122.8740 },
+  'molas': { kec: 'Bongomeme', lat: 0.5900, lng: 122.8610 },
+  'molopatodu': { kec: 'Bongomeme', lat: 0.5950, lng: 122.8670 },
+  'otopade': { kec: 'Bongomeme', lat: 0.5935, lng: 122.8645 },
+  'owalanga': { kec: 'Bongomeme', lat: 0.5925, lng: 122.8635 },
+  'tohupo': { kec: 'Bongomeme', lat: 0.5915, lng: 122.8625 },
+  'upomela': { kec: 'Bongomeme', lat: 0.5905, lng: 122.8615 },
+
+  // Kecamatan Dungaliyo
+  'ambara': { kec: 'Dungaliyo', lat: 0.6050, lng: 122.8863 },
+  'ayuhula': { kec: 'Dungaliyo', lat: 0.6060, lng: 122.8880 },
+  'bongomeme': { kec: 'Dungaliyo', lat: 0.6041, lng: 122.8861 },
+  'botubulowe': { kec: 'Dungaliyo', lat: 0.6070, lng: 122.8890 },
+  'dungaliyo': { kec: 'Dungaliyo', lat: 0.6055, lng: 122.8870 },
+  'duwanga': { kec: 'Dungaliyo', lat: 0.6045, lng: 122.8855 },
+  'kaliyoso': { kec: 'Dungaliyo', lat: 0.6035, lng: 122.8845 },
+  'momala': { kec: 'Dungaliyo', lat: 0.6065, lng: 122.8885 },
+  'pangadaa': { kec: 'Dungaliyo', lat: 0.6075, lng: 122.8895 },
+  'pilolalenga': { kec: 'Dungaliyo', lat: 0.6080, lng: 122.8900 },
+
+  // Kecamatan Tibawa
+  'balahu': { kec: 'Tibawa', lat: 0.6450, lng: 122.8620 },
+  'botumoputi': { kec: 'Tibawa', lat: 0.6460, lng: 122.8630 },
+  'buhu': { kec: 'Tibawa', lat: 0.6470, lng: 122.8640 },
+  'datahu': { kec: 'Tibawa', lat: 0.6480, lng: 122.8650 },
+  'dunggala': { kec: 'Tibawa', lat: 0.6435, lng: 122.8617 },
+  'ilomata': { kec: 'Tibawa', lat: 0.6490, lng: 122.8660 },
+  'iloponu': { kec: 'Tibawa', lat: 0.6500, lng: 122.8670 },
+  'isimu raya': { kec: 'Tibawa', lat: 0.6422, lng: 122.8456 },
+  'isimu selatan': { kec: 'Tibawa', lat: 0.6410, lng: 122.8440 },
+  'isimu utara': { kec: 'Tibawa', lat: 0.6440, lng: 122.8470 },
+  'labanu': { kec: 'Tibawa', lat: 0.6510, lng: 122.8680 },
+  'molowahu': { kec: 'Tibawa', lat: 0.6520, lng: 122.8690 },
+  'motilango': { kec: 'Tibawa', lat: 0.6530, lng: 122.8700 },
+  'reksonegoro': { kec: 'Tibawa', lat: 0.6540, lng: 122.8710 },
+  'tolotio': { kec: 'Tibawa', lat: 0.6497, lng: 122.8449 },
+  'ulobua': { kec: 'Tibawa', lat: 0.6550, lng: 122.8720 },
+
+  // Kecamatan Pulubala
+  'ayumolingo': { kec: 'Pulubala', lat: 0.6520, lng: 122.8030 },
+  'bakti': { kec: 'Pulubala', lat: 0.6510, lng: 122.8020 },
+  'molalahu': { kec: 'Pulubala', lat: 0.6530, lng: 122.8040 },
+  'molamahu': { kec: 'Pulubala', lat: 0.6540, lng: 122.8050 },
+  'mulyonegoro': { kec: 'Pulubala', lat: 0.6550, lng: 122.8060 },
+  'pongongaila': { kec: 'Pulubala', lat: 0.6500, lng: 122.8010 },
+  'pulubala': { kec: 'Pulubala', lat: 0.6513, lng: 122.8015 },
+  'puncak': { kec: 'Pulubala', lat: 0.6560, lng: 122.8070 },
+  'toyidito': { kec: 'Pulubala', lat: 0.6490, lng: 122.8000 },
+  'tridharma': { kec: 'Pulubala', lat: 0.6570, lng: 122.8080 },
+  'bukit aren': { kec: 'Pulubala', lat: 0.6480, lng: 122.7990 },
+
+  // Kecamatan Limboto Barat
+  'daenaa': { kec: 'Limboto Barat', lat: 0.6390, lng: 122.9265 },
+  'haya-haya': { kec: 'Limboto Barat', lat: 0.6400, lng: 122.9280 },
+  'huidu': { kec: 'Limboto Barat', lat: 0.6380, lng: 122.9250 },
+  'huidu utara': { kec: 'Limboto Barat', lat: 0.6370, lng: 122.9240 },
+  'hutabohu': { kec: 'Limboto Barat', lat: 0.6410, lng: 122.9290 },
+  'ombulo': { kec: 'Limboto Barat', lat: 0.6360, lng: 122.9230 },
+  'padengo': { kec: 'Limboto Barat', lat: 0.6350, lng: 122.9220 },
+  'pone': { kec: 'Limboto Barat', lat: 0.6340, lng: 122.9210 },
+  'tunggulo': { kec: 'Limboto Barat', lat: 0.6420, lng: 122.9300 },
+  'yosonegoro': { kec: 'Limboto Barat', lat: 0.6381, lng: 122.9266 },
+
+  // Kecamatan Limboto
+  'biyonga': { kec: 'Limboto', lat: 0.6310, lng: 122.9810 },
+  'bolihuangga': { kec: 'Limboto', lat: 0.6320, lng: 122.9820 },
+  'bulota': { kec: 'Limboto', lat: 0.6280, lng: 122.9780 },
+  'dutulanaa': { kec: 'Limboto', lat: 0.6260, lng: 122.9760 },
+  'hepuhulawa': { kec: 'Limboto', lat: 0.6250, lng: 122.9750 },
+  'hunggaluwa': { kec: 'Limboto', lat: 0.6201, lng: 122.9765 },
+  'hutuo': { kec: 'Limboto', lat: 0.6240, lng: 122.9740 },
+  'kayubulan': { kec: 'Limboto', lat: 0.6293, lng: 122.9800 },
+  'malahu': { kec: 'Limboto', lat: 0.6330, lng: 122.9830 },
+  'polohungo': { kec: 'Limboto', lat: 0.6340, lng: 122.9840 },
+  'tenilo': { kec: 'Limboto', lat: 0.6350, lng: 122.9850 },
+  'tilihuwa': { kec: 'Limboto', lat: 0.6360, lng: 122.9860 },
+
+  // Kecamatan Batudaa
+  'barakati': { kec: 'Batudaa', lat: 0.5960, lng: 122.9100 },
+  'bua': { kec: 'Batudaa', lat: 0.5970, lng: 122.9110 },
+  'huntu': { kec: 'Batudaa', lat: 0.5980, lng: 122.9120 },
+  'ilohungayo': { kec: 'Batudaa', lat: 0.5950, lng: 122.9090 },
+  'iluta': { kec: 'Batudaa', lat: 0.5940, lng: 122.9080 },
+  'payunga': { kec: 'Batudaa', lat: 0.5930, lng: 122.9070 },
+  'pilobuhuta': { kec: 'Batudaa', lat: 0.5920, lng: 122.9060 },
+}
+
 const ARUS = {
   menuju: {
     label: '🔴 Menuju Kampung Jawa',
@@ -168,15 +265,43 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
   }
 
   const handleInputSend = () => {
-    const msg = input.trim()
-    if (!msg) return
-    setInput('')
-    addMessage('user', msg)
-    const msgLower = msg.toLowerCase()
+  const msg = input.trim()
+  if (!msg) return
+  setInput('')
+  addMessage('user', msg)
+  const msgLower = msg.toLowerCase()
 
-    if (msgLower.includes('ulang') || msgLower.includes('kembali') || msgLower.includes('reset')) {
-      reset(); return
-    }
+  if (msgLower.includes('ulang') || msgLower.includes('kembali') || msgLower.includes('reset')) {
+    reset(); return
+  }
+
+  if (KONTEKS_LAIN.some(k => msgLower.includes(k))) {
+    addMessage('assistant', '📲 Untuk informasi medis, pengamanan, event, dan info lainnya,\nsilakan kunjungi:\n\n👉 Instagram: @gorontalo.unite')
+    return
+  }
+
+  // ✅ Cek nama desa dulu
+  const desaKey = Object.keys(DESA).find(d => msgLower.includes(d))
+  if (desaKey) {
+    const desa = DESA[desaKey]
+    if (onZoomLocation) onZoomLocation({ lat: desa.lat, lng: desa.lng })
+    addMessage('assistant', `🗺️ Peta sudah di-zoom ke Desa *${desaKey.charAt(0).toUpperCase() + desaKey.slice(1)}*, Kec. ${desa.kec}.\n\nCek kondisi lalu lintas di peta di bawah ya! 👇`)
+    return
+  }
+
+  // Cek lokasi utama
+  const lokasiDisebut = LOKASI.find(l =>
+    msgLower.includes(l.nama.toLowerCase().split(' ')[1] || l.nama.toLowerCase().split(' ')[0])
+  )
+  if (lokasiDisebut && onZoomLocation) {
+    onZoomLocation(lokasiDisebut)
+    addMessage('assistant', `🗺️ Peta sudah di-zoom ke *${lokasiDisebut.nama}*.\nCek kondisi di peta di bawah ya! 👇`)
+    return
+  }
+
+  addMessage('assistant', '🚦 Maaf, saya hanya bisa bantu info rute lalu lintas.\n\nMau pilih rute baru?')
+  setTimeout(() => reset(), 1500)
+}
 
     if (KONTEKS_LAIN.some(k => msgLower.includes(k))) {
       addMessage('assistant', '📲 Untuk informasi medis, pengamanan, event, dan info lainnya,\nsilakan kunjungi:\n\n👉 Instagram: @gorontalo.unite')

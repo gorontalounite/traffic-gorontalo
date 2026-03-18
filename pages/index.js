@@ -88,7 +88,7 @@ export default function Home() {
 
         <main className="max-w-lg mx-auto pt-4">
           <AlertBanner reports={allReports} />
-          <StatusBar reports={allReports} />
+          <StatusBar reports={allReports} onSelectKec={(kec) => setZoomTarget(kec)} />
           <ChatPanel reports={allReports} onZoomLocation={setZoomTarget} /> {/* ✅ BARU: onZoomLocation */}
           <MapView
             reports={allReports}

@@ -1,6 +1,6 @@
 import { KECAMATAN_LIST, STATUS_CONFIG } from '../lib/supabase'
 
-export default function StatusBar({ reports }) {
+export default function StatusBar({ reports, onSelectKec }) {
   const getLatestStatus = (kecId) => {
     if (!reports || reports.length === 0) return null
     const found = reports.find((r) => r.kecamatan_id === kecId)
@@ -18,9 +18,10 @@ export default function StatusBar({ reports }) {
           const cfg = status ? STATUS_CONFIG[status] : null
 
           return (
-            <div
+            <button
               key={kec.id}
-              className={`flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 border text-xs font-mono transition-all ${
+              onClick={() => onSelectKec && onSelectKec(kec)}
+              className={`flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 border text-xs font-mono transition-all cursor-pointer hover:opacity-80 active:scale-95 ${
                 cfg
                   ? `${cfg.bg} ${cfg.border} ${cfg.text}`
                   : 'bg-asphalt-700 border-asphalt-600 text-gray-500'
@@ -43,7 +44,7 @@ export default function StatusBar({ reports }) {
               {cfg && (
                 <span className="opacity-70">· {cfg.label}</span>
               )}
-            </div>
+            </button>
           )
         })}
       </div>

@@ -1,49 +1,28 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+'use client'
 
 const PLATFORM_CONFIG = {
-  instagram: { label: 'Instagram', emoji: '📸' },
-  tiktok: { label: 'TikTok', emoji: '🎵' },
-  berita: { label: 'Berita', emoji: '📰' },
-  lainnya: { label: 'Lainnya', emoji: '🔗' },
+  instagram: { emoji: '📸', label: 'Instagram' },
+  facebook:  { emoji: '📘', label: 'Facebook' },
+  tiktok:    { emoji: '🎵', label: 'TikTok' },
+  twitter:   { emoji: '🐦', label: 'Twitter/X' },
+  youtube:   { emoji: '▶️',  label: 'YouTube' },
+  berita:    { emoji: '📰', label: 'Berita' },
+  lainnya:   { emoji: '🔗', label: 'Lainnya' },
 }
 
-export default function EmbedFeed() {
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => { fetchPosts() }, [])
-
-  const fetchPosts = async () => {
-    if (!supabase) { setLoading(false); return }
-    try {
-      const { data } = await supabase
-        .from('embed_posts')
-        .select('*')
-        .eq('aktif', true)
-        .order('created_at', { ascending: false })
-        .limit(9)
-      if (data) setPosts(data)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) return null
-  if (posts.length === 0) return null
+export default function EmbedFeed({ posts = [] }) {
+  if (!posts.length) return null
 
   return (
     <div className="px-4 mb-6">
       <p className="text-xs text-gray-500 font-mono uppercase tracking-widest mb-3">
-        📱 Dari Media Sosial & Berita
+        📱 Dari Media Sosial &amp; Berita
       </p>
       <div className="grid grid-cols-3 gap-2">
         {posts.map((post) => {
           const cfg = PLATFORM_CONFIG[post.platform] || PLATFORM_CONFIG.lainnya
           return (
-            
+            <a
               key={post.id}
               href={post.url}
               target="_blank"

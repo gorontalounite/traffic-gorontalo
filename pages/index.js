@@ -14,7 +14,8 @@ export default function Home() {
   const [loadingReports, setLoadingReports] = useState(true)
   const [selectedKec, setSelectedKec] = useState(null)
   const [localReports, setLocalReports] = useState([])
-  const [zoomTarget, setZoomTarget] = useState(null) // ✅ BARU
+  const [zoomTarget, setZoomTarget] = useState(null)
+  const [routeData, setRouteData] = useState(null)
 
   const fetchReports = async () => {
     if (!supabase) { setLoadingReports(false); return }
@@ -70,8 +71,9 @@ export default function Home() {
                 <Image src="/LogoSatlantas.png" alt="Satlantas" width={30} height={30} className="object-contain" />
               </div>
               <div className="flex flex-col items-center text-center flex-1 px-2">
-                <h1 className="font-display font-800 text-xs text-gray-100 leading-tight tracking-wide uppercase">
-                  Arus Lalu Lintas
+                <p className="text-xs text-gray-600 font-mono leading-tight">
+                  Kab. Gorontalo · Live
+                </p>
               </div>
               <div className="flex items-center gap-1.5">
                 <Image src="/LogoGorontaloUnite.png" alt="Gorontalo Unite" width={34} height={34} className="object-contain rounded-full" />
@@ -84,12 +86,17 @@ export default function Home() {
 
         <main className="max-w-lg mx-auto pt-4">
           <AlertBanner reports={allReports} />
-          <ChatPanel reports={allReports} onZoomLocation={setZoomTarget} /> {/* ✅ BARU: onZoomLocation */}
+          <ChatPanel
+            reports={allReports}
+            onZoomLocation={setZoomTarget}
+            onRouteFound={setRouteData}
+          />
           <MapView
             reports={allReports}
             selectedKec={selectedKec}
             onSelectKec={setSelectedKec}
-            zoomTarget={zoomTarget} // ✅ BARU: zoomTarget
+            zoomTarget={zoomTarget}
+            routeData={routeData}
           />
           <ReportForm onReportSubmitted={handleReportSubmitted} />
           <ReportHistory reports={allReports} loading={loadingReports} />

@@ -31,7 +31,7 @@ const KEL_BONE_BOLANGO = [
   'bandungan','boidu','bunuo','kopi','lomaya','longalo','suka damai','tuloa','tupa',
   'bukit hijau','dunggilata','kaidundu','kaidundu barat','mamungaa','mamungaa timur','mopuya','patoa','pinomotiga',
   'dutohe','dutohe barat','poowo','poowo barat','talango','tanggilingo','toto selatan',
-  'oluhuta','oluhuta utara','padengo','pauwo','tumbihe',
+  'oluhuta','oluhuta utara','pauwo','tumbihe',
   'biluango','bintalahe','botubarani','botutonuo','modelomo','molutabu','olele',
   'bangio','dataran hijau','pinogu','pinogu permai','tilonggibila',
   'boludawa','bube','bube baru','bubeya','helumo','huluduotamo','tingkohubu','tingkohubu timur','ulanta',
@@ -52,20 +52,89 @@ const KEC_GORONTALO_REFORMASI = ['telaga biru','limboto','limboto barat']
 const KEC_GORONTALO_BATUDAA = ['batudaa','batudaa pantai','tabongo']
 const KEC_GORONTALO_ISIMU = ['bongomeme','dungaliyo','pulubala','tibawa','asparaga','bilato','boliyohuto','mootilango','tolangohula']
 
-const KAB_TRANS_SULAWESI = [
-  'gorontalo utara','gorut','boalemo','pohuwato',
-  // kec gorut
-  'anggrek','atinggola','biau','kwandang','monano','molabuoh','nuangan','sumalata','sumalata timur','tomilito','tolinggula','gentuma raya','ponelo kepulauan',
-  // kec boalemo
-  'botumoito','dulupi','mananggu','paguyaman pantai','tilamuta','wonosari',
-  // kec pohuwato
-  'buntulia','dengilo','duhiadaa','lemito','marisa','paguat','patilanggio','popayato','popayato barat','popayato timur','randangan','taluditi','wanggarasi',
+// Gorontalo Utara — kecamatan & desa lengkap
+const GORUT = [
+  'gorontalo utara','gorut',
+  // kec anggrek
+  'anggrek','datahu','dudepo','heluma','hiyalooile','ibarat','ilangata','ilodulunga','iloheluma','langge','mootilango','popalo','putiana','tolango','tolongio','tutuwoto',
+  // kec atinggola
+  'atinggola','bintana','buata','ilomata','imana','kotajin','kotajin utara','monggupo','oluhuta','pinontoyonga','posono','sigaso','wapalo',
+  // kec biau
+  'biau','bohulo','bualo','didingga','luhuto','omuto','potanga','sembihinga','topi','windu',
+  // kec gentuma raya
+  'gentuma raya','bohusami','dumolodo','durian','gentuma','ipilo','ketapang','langke','molonggota','motomingo','nanati jaya','pasalae',
+  // kec kwandang
+  'kwandang','alata karya','botungobungo','botuwombato','bualemo','bulalo','cisadane','katialada','leboto','masuru','molingkapoto','molingkapoto selatan','moluo','mootinelo','ombulodata','pontolo','pontolo atas','posso','titidu',
+  // kec monano
+  'monano','dunu','garapia','mokonowu','monas','pilohulata','sogu','tolitehuyu','tudi','zuriyati',
+  // kec ponelo kepulauan
+  'ponelo kepulauan','malambe','otiola','ponelo','tihengo',
+  // kec sumalata
+  'sumalata','buloila','bulontiyo barat','bulontiyo timur','hutakalo','kasia','kikia','lelato','mebongo','pulohenti','puncak mandiri','tumba',
+  // kec sumalata timur
+  'sumalata timur','bubalango','buladu','buluwatu','deme dua','deme satu','dulukapa','hulawa','koluwoka','motiheluma','wubudu',
+  // kec tolinggula
+  'tolinggula','cempaka putih','ilomangga','ilotunggulo','limbato','molangga','papualangi','tolinggula pantai','tolinggula tengah','tolinggula ulu','tolite jaya',
+  // kec tomilito
+  'tomilito','bubode','bulango raya','dambalo','huidu melito','jembatan merah','leyao','milango','molantadu','mutiara laut','tanjung karang',
 ]
+
+// Pohuwato — kecamatan & desa lengkap
+const POHUWATO = [
+  'pohuwato',
+  // kec buntulia
+  'buntulia','buntulia tengah','buntulia utara','hulawa','karya indah','sipatana','taluduyunu','taluduyunu utara',
+  // kec dengilo
+  'dengilo','hutamoputi','karangetang','karya baru','popaya',
+  // kec duhiadaa
+  'duhiadaa','bulili','buntulia barat','buntulia jaya','buntulia selatan','mekar jaya',
+  // kec lemito
+  'lemito','babalonge','kenari','lemito utara','lomuli','suka damai','wonggarasi barat','wonggarasi tengah',
+  // kec marisa
+  'marisa','botubilotahu','bulangita','marisa selatan','marisa utara','palopo','pohuwato timur','teratai',
+  // kec paguat
+  'paguat','buhu jaya','bumbulan','bunuyo','kemiri','maleo','molamahu','sipayo','soginti','libuo','pentadu','siduan',
+  // kec patilanggio
+  'patilanggio','balayo','dulomo','dudepo','manawa','suka makmur',
+  // kec popayato
+  'popayato','bumi bahari','bukit tingki','telaga biru','torosiaje','torosiaje jaya','trikora','tunas harapan',
+  // kec popayato barat
+  'popayato barat','butungale','dudewulo','molosifat','molosifat utara','persatuan','tunas jaya',
+  // kec popayato timur
+  'popayato timur','bunto','kelapa lima','londoun','milangodaa','tahele',
+  // kec randangan
+  'randangan','ayula','banuroja','huyula','imbodu','manunggal karya','motolohu','motolohu selatan','omayuwa','patuhu','pelambane','sari murni','sido rukun','sidowonge',
+  // kec taluditi
+  'taluditi','kalimas','makarti jaya','malango','marisa iv','pancakarsa i','pancakarsa ii','tirto asri',
+  // kec wanggarasi
+  'wanggarasi','bohusami','bukit harapan','lembah permai','limbula','tuweya','wanggarasi timur','yipilo',
+]
+
+// Boalemo — kecamatan & desa lengkap
+const BOALEMO = [
+  'boalemo',
+  // kec botumoito
+  'botumoito','bolihutuo','dulangeya','hutamonu','patoameme','potanga','rumbia','tapadaa','tutulo',
+  // kec dulupi
+  'dulupi','kotaraja','pangi','polohungo','tanah putih','tangga barito','tangga jaya',
+  // kec mananggu
+  'mananggu','bendungan','buti','kaaruyan','kramat','pontolo','salilama','tabulo','tabulo selatan',
+  // kec paguyaman
+  'paguyaman','balate jaya','batu kramat','bongo iv','bongo nol','bongo tua','bualo','diloato','girisa','hulawa','huwongo','karya murni','kuala lumpur','molombulahe','mustika','mutiara','rejonegoro','saripi','sosial','tangkobu','tenilo','wonggahu',
+  // kec paguyaman pantai
+  'paguyaman pantai','apitalawu','bangga','bubaa','bukit karya','limbatihu','lito','olibu','towayu',
+  // kec tilamuta
+  'tilamuta','ayuhulalo','hungayonaa','lahumbo','lamu','limbato','modelomo','mohungo','pentadu barat','pentadu timur','piloliyanga',
+  // kec wonosari
+  'wonosari','bongo ii','bongo iii','dimito','dulohupa','harapan','jatimulya','mekarjaya','pangea','raharja','sari tani','suka mulya','sukamaju','tanjung harapan','tri rukun',
+]
+
+const KAB_TRANS_SULAWESI = [...GORUT, ...POHUWATO, ...BOALEMO]
 
 // Kata kunci tujuan = Kampung Jawa
 const KATA_KAMPUNG_JAWA = ['kampung jawa','ketupat','yosonegoro','isimu','tugu tani','lokasi ketupat','lebaran ketupat']
 // Kata kunci arus balik
-const KATA_BALIK = ['balik','pulang','kembali','balik ke','pulang ke','kembali ke']
+const KATA_BALIK = ['balik','pulang','kembali']
 
 // ── RUTE ─────────────────────────────────────────────────────────────────────
 
@@ -207,43 +276,34 @@ function detectAsal(q) {
 function parseInput(raw) {
   const q = raw.toLowerCase().trim()
 
-  // Cek prioritas
   if (q.includes('ambulance') || q.includes('bandara') || q.includes('prioritas')) {
     return { mode: 'prioritas' }
   }
 
-  // Pisah input dengan kata pemisah
   const pemisah = [' ke ', ' menuju ', ' ke kampung', ' balik ke ', ' pulang ke ', ' kembali ke ']
-  let bagian = [q]
+  let asal = q
+  let tujuan = ''
   for (const p of pemisah) {
     if (q.includes(p)) {
       const idx = q.indexOf(p)
-      bagian = [q.slice(0, idx).trim(), q.slice(idx + p.length).trim()]
+      asal = q.slice(0, idx).trim()
+      tujuan = q.slice(idx + p.length).trim()
       break
     }
   }
 
-  const asal = bagian[0] || ''
-  const tujuan = bagian[1] || ''
-
-  // Deteksi arus balik: tujuan bukan kampung jawa, atau ada kata balik
   const isBalik = KATA_BALIK.some(k => q.includes(k)) ||
     (tujuan && !KATA_KAMPUNG_JAWA.some(k => tujuan.includes(k)) && !KATA_KAMPUNG_JAWA.some(k => asal.includes(k)))
 
   const isMenuju = KATA_KAMPUNG_JAWA.some(k => q.includes(k)) && !isBalik
 
-  // Arus balik
   if (isBalik && !isMenuju) {
     const tujuanTrans = isWilayahTrans(tujuan || q)
     return { mode: 'balik', tujuanLabel: tujuan || asal, tujuanTrans }
   }
 
-  // Menuju kampung jawa — deteksi dari asal
   const asalType = detectAsal(asal || q)
-  if (!asalType) {
-    // Tidak dikenal — tanya konfirmasi
-    return { mode: 'tanya', input: raw }
-  }
+  if (!asalType) return { mode: 'tanya', input: raw }
 
   return { mode: 'menuju', asalType, asalLabel: asal || raw }
 }
@@ -287,17 +347,12 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     setMessages([{ role: 'assistant', text: 'Hari ini mau kemana? 🗺️' }])
   }
 
-  const handlePilihArah = (mode) => {
-    setStep(STEP.INPUT)
-    if (mode === 'prioritas') {
-      addMsg('user', '🚑 Jalur Prioritas')
-      addMsg('assistant', `🚑 *${RUTE_PRIORITAS.label}*\n\n📋 ${RUTE_PRIORITAS.deskripsi}`)
-      setStep(STEP.RUTE)
-      sessionStorage.setItem('peta_rute', JSON.stringify({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan }))
-      if (onRouteFound) onRouteFound({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan })
-    } else {
-      addMsg('assistant', 'Ketik perjalananmu.\nContoh: "Dari Dembe ke Kampung Jawa" atau "Balik ke Tomilito"')
-    }
+  const handlePilihPrioritas = () => {
+    addMsg('user', '🚑 Jalur Prioritas')
+    addMsg('assistant', `🚑 *${RUTE_PRIORITAS.label}*\n\n📋 ${RUTE_PRIORITAS.deskripsi}`)
+    setStep(STEP.RUTE)
+    sessionStorage.setItem('peta_rute', JSON.stringify({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan }))
+    if (onRouteFound) onRouteFound({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan })
   }
 
   const handleSubmitInput = () => {
@@ -309,15 +364,13 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     const parsed = parseInput(val)
 
     if (parsed.mode === 'prioritas') {
-      addMsg('assistant', `🚑 *${RUTE_PRIORITAS.label}*\n\n📋 ${RUTE_PRIORITAS.deskripsi}`)
-      setStep(STEP.RUTE)
-      sessionStorage.setItem('peta_rute', JSON.stringify({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan }))
-      if (onRouteFound) onRouteFound({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan })
+      handlePilihPrioritas()
       return
     }
 
     if (parsed.mode === 'tanya') {
       addMsg('assistant', `"${parsed.input}" ada di kabupaten/kota mana?\n\nContoh: Kota Gorontalo, Bone Bolango, Kab. Gorontalo, Gorontalo Utara, Boalemo, atau Pohuwato.`)
+      setStep(STEP.INPUT)
       return
     }
 
@@ -335,6 +388,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
       const rute = getRuteMenuju(parsed.asalType)
       if (!rute) {
         addMsg('assistant', `Maaf, belum ada panduan rute dari "${parsed.asalLabel}".\n\nCoba sebutkan nama kecamatan atau kabupaten/kota kamu.`)
+        setStep(STEP.INPUT)
         return
       }
       addMsg('assistant', rute.length === 1
@@ -450,8 +504,8 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
           <div ref={bottomRef} />
         </div>
 
-        {/* Step: Awal — hanya jalur prioritas + input */}
-        {step === STEP.AWAL && (
+        {/* Input — tampil di AWAL dan INPUT */}
+        {(step === STEP.AWAL || step === STEP.INPUT) && (
           <div className="px-4 pb-4">
             <p className="text-xs text-gray-600 font-mono mb-2">🧭 Masukan kecamatan:</p>
             <div className="flex gap-2 mb-2">
@@ -469,35 +523,14 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
                 →
               </button>
             </div>
-            <button onClick={() => handlePilihArah('prioritas')}
+            <button onClick={handlePilihPrioritas}
               className="w-full text-left text-sm bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 hover:border-asphalt-500 text-gray-200 rounded-xl px-4 py-3 transition-all font-display font-600">
               🚑 Jalur Prioritas (Ambulance & Bandara)
             </button>
           </div>
         )}
 
-        {/* Step: Input lanjutan */}
-        {step === STEP.INPUT && (
-          <div className="px-4 pb-4">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={inputVal}
-                onChange={e => setInputVal(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubmitInput()}
-                placeholder="Contoh: Dari Dembe ke Kampung Jawa"
-                className="flex-1 text-xs bg-asphalt-700 border border-asphalt-600 text-gray-200 rounded-xl px-3 py-2.5 font-mono placeholder-gray-600 focus:outline-none focus:border-asphalt-400"
-                autoFocus
-              />
-              <button onClick={handleSubmitInput}
-                className="text-xs bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl px-3 py-2.5 font-mono transition-all">
-                →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step: Pilih Alternatif */}
+        {/* Pilih Alternatif */}
         {step === STEP.ALTERNATIF && (
           <div className="px-4 pb-4">
             <p className="text-xs text-gray-600 font-mono mb-2">🛣️ Pilih rute:</p>
@@ -512,7 +545,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
           </div>
         )}
 
-        {/* Step: Setelah rute */}
+        {/* Setelah rute */}
         {step === STEP.RUTE && !loadingRute && (
           <div className="px-4 pb-4 pt-2">
             <div className="flex gap-2">

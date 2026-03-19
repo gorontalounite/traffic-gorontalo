@@ -488,7 +488,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
               <input type="text" value={inputVal}
                 onChange={e => setInputVal(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSubmitInput()}
-                placeholder="Contoh: Dari Kwandang ke Kampung Jawa"
+
                 className="flex-1 text-xs bg-asphalt-700 border border-asphalt-600 text-gray-200 rounded-xl px-3 py-2.5 font-mono placeholder-gray-600 focus:outline-none focus:border-asphalt-400"
                 autoFocus />
               <button onClick={handleSubmitInput}

@@ -74,25 +74,25 @@ const POHUWATO = [
   'buntulia','buntulia tengah','buntulia utara','hulawa','karya indah','sipatana','taluduyunu','taluduyunu utara',
   'dengilo','hutamoputi','karangetang','karya baru','popaya',
   'duhiadaa','bulili','buntulia barat','buntulia jaya','buntulia selatan','mekar jaya',
-  'lemito','babalonge','kenari','lemito utara','lomuli','wonggarasi barat','wonggarasi tengah',
+  'lemito','babalonge','kenari','lemito utara','lomuli','suka damai','wonggarasi barat','wonggarasi tengah',
   'marisa','botubilotahu','bulangita','marisa selatan','marisa utara','palopo','pohuwato timur','teratai',
-  'paguat','buhu jaya','bumbulan','bunuyo','kemiri','maleo','molamahu','sipayo','soginti','pentadu','siduan',
-  'patilanggio','balayo','dulomo','dudepo','manawa',
-  'popayato','bumi bahari','bukit tingki','torosiaje','torosiaje jaya','trikora','tunas harapan',
+  'paguat','buhu jaya','bumbulan','bunuyo','kemiri','maleo','molamahu','sipayo','soginti','libuo','pentadu','siduan',
+  'patilanggio','balayo','dulomo','dudepo','manawa','suka makmur',
+  'popayato','bumi bahari','bukit tingki','telaga biru','torosiaje','torosiaje jaya','trikora','tunas harapan',
   'popayato barat','butungale','dudewulo','molosifat','molosifat utara','persatuan','tunas jaya',
   'popayato timur','bunto','kelapa lima','londoun','milangodaa','tahele',
   'randangan','ayula','banuroja','huyula','imbodu','manunggal karya','motolohu','motolohu selatan','omayuwa','patuhu','pelambane','sari murni','sido rukun','sidowonge',
   'taluditi','kalimas','makarti jaya','malango','marisa iv','pancakarsa i','pancakarsa ii','tirto asri',
-  'wanggarasi','bukit harapan','lembah permai','limbula','tuweya','wanggarasi timur','yipilo',
+  'wanggarasi','bohusami','bukit harapan','lembah permai','limbula','tuweya','wanggarasi timur','yipilo',
 ]
 
 // Boalemo
 const BOALEMO = [
   'boalemo',
-  'botumoito','bolihutuo','dulangeya','hutamonu','patoameme','rumbia','tutulo',
-  'dulupi','kotaraja','pangi','polohungo','tangga barito','tangga jaya',
-  'mananggu','bendungan','buti','kaaruyan','kramat','salilama','tabulo','tabulo selatan',
-  'paguyaman','balate jaya','batu kramat','bongo iv','bongo nol','bongo tua','bualo','diloato','girisa','huwongo','karya murni','kuala lumpur','molombulahe','mustika','mutiara','rejonegoro','saripi','sosial','tangkobu','wonggahu',
+  'botumoito','bolihutuo','dulangeya','hutamonu','patoameme','potanga','rumbia','tapadaa','tutulo',
+  'dulupi','kotaraja','pangi','polohungo','tanah putih','tangga barito','tangga jaya',
+  'mananggu','bendungan','buti','kaaruyan','kramat','pontolo','salilama','tabulo','tabulo selatan',
+  'paguyaman','balate jaya','batu kramat','bongo iv','bongo nol','bongo tua','bualo','diloato','girisa','hulawa','huwongo','karya murni','kuala lumpur','molombulahe','mustika','mutiara','rejonegoro','saripi','sosial','tangkobu','tenilo','wonggahu',
   'paguyaman pantai','apitalawu','bangga','bubaa','bukit karya','limbatihu','lito','olibu','towayu',
   'tilamuta','ayuhulalo','hungayonaa','lahumbo','lamu','limbato','modelomo','mohungo','pentadu barat','pentadu timur','piloliyanga',
   'wonosari','bongo ii','bongo iii','dimito','dulohupa','harapan','jatimulya','mekarjaya','pangea','raharja','sari tani','suka mulya','sukamaju','tanjung harapan','tri rukun',
@@ -100,58 +100,137 @@ const BOALEMO = [
 
 const KAB_TRANS_SULAWESI = [...GORUT, ...POHUWATO, ...BOALEMO]
 
-// ── KOORDINAT ASAL PER WILAYAH ────────────────────────────────────────────────
+const KATA_KAMPUNG_JAWA = ['kampung jawa','ketupat','yosonegoro','isimu','tugu tani','lokasi ketupat','lebaran ketupat']
+const KATA_BALIK = ['balik','pulang','kembali']
 
-const KOORDINAT_ASAL = {
-  '3alt':      { lat: 0.5480, lng: 123.0580, nama: 'Kota Gorontalo' },
-  'reformasi': { lat: 0.6270, lng: 122.9799, nama: 'Limboto' },
-  'batudaa':   { lat: 0.5960, lng: 122.9100, nama: 'Batudaa' },
-  'isimu':     { lat: 0.6041, lng: 122.8861, nama: 'Bongomeme' },
-  'trans':     { lat: 0.7200, lng: 122.4500, nama: 'Gorontalo Utara / Boalemo / Pohuwato' },
-}
+// ── RUTE ─────────────────────────────────────────────────────────────────────
 
-// ── RUTE PANDUAN (untuk ditampilkan sebagai info) ────────────────────────────
-
-const PANDUAN_MENUJU = {
+const RUTE_MENUJU = {
   tiga_alternatif: [
-    'Alternatif 1 — Lewat Jl. GORR: Dari Kota Gorontalo → Jl. A.A. Wahab (Telaga) → belok kanan Jl. Pilohayanga → belok kiri Jl. GORR → Lokasi Ketupat (Kampung Jawa)',
-    'Alternatif 2 — Lewat Jl. Reformasi: Dari Kota Gorontalo → Jl. A.A. Wahab → belok kiri Jl. Reformasi → Simpang 4 Patung Berdoa (Hunggaluwa) → Jl. Trans Sulawesi → Tugu Ketupat',
-    'Alternatif 3 — Lewat Batudaa–Bongomeme: Dari Kota Gorontalo → Dembe–Lekobalo → Jl. Batudaa → Simpang 3 Pasar Bongomeme → Tugu Tani Isimu',
+    {
+      id: 'alt_gorr',
+      label: 'Alternatif 1 — Lewat Jl. GORR',
+      deskripsi: 'Dari Kota Gorontalo → Jl. A.A. Wahab (Telaga) → belok kanan Jl. Pilohayanga (depan Muraa Supermarket) → belok kiri Jl. GORR → lurus ke Lokasi Ketupat (Kampung Jawa)',
+      asal: { id: 'kota_gto', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
+      tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
+    },
+    {
+      id: 'alt_reformasi',
+      label: 'Alternatif 2 — Lewat Jl. Reformasi',
+      deskripsi: 'Dari Kota Gorontalo → Jl. A.A. Wahab (Telaga–Limboto) → belok kiri Jl. Reformasi (arah Danau Limboto) → lurus Simpang 4 Patung Berdoa (Hunggaluwa) → Jl. Trans Sulawesi → Tugu Ketupat (Kampung Jawa)',
+      asal: { id: 'kota_gto', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
+      tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
+    },
+    {
+      id: 'alt_batudaa',
+      label: 'Alternatif 3 — Lewat Batudaa–Bongomeme',
+      deskripsi: 'Dari Kota Gorontalo → Dembe–Lekobalo → Jl. Batudaa → belok kanan Simpang 3 Pasar Bongomeme → lurus sampai Tugu Tani Isimu',
+      asal: { id: 'kota_gto', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
+      tujuan: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
+    },
   ],
   reformasi_saja: [
-    'Lewat Jl. Reformasi: Dari Limboto/Telaga Biru → Jl. Reformasi → Simpang 4 Patung Berdoa → Jl. Trans Sulawesi → Tugu Ketupat (Kampung Jawa)',
+    {
+      id: 'alt_reformasi',
+      label: 'Lewat Jl. Reformasi',
+      deskripsi: 'Dari Limboto/Telaga Biru → Jl. A.A. Wahab → belok kiri Jl. Reformasi (arah Danau Limboto) → lurus Simpang 4 Patung Berdoa (Hunggaluwa) → Jl. Trans Sulawesi → Tugu Ketupat (Kampung Jawa)',
+      asal: { id: 'limboto', nama: 'Limboto', lat: 0.6270, lng: 122.9799 },
+      tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
+    },
   ],
   batudaa_tabongo: [
-    'Alternatif 1 — Lewat Desa Ilomangga: Dari Batudaa/Tabongo → pertigaan Desa Ilomangga → Tunggulo → Kampung Jawa',
-    'Alternatif 2 — Lewat Desa Limehe Barat: Dari Batudaa/Tabongo → pertigaan Desa Limehe Barat → Pasar Hutabohu → Kampung Jawa',
+    {
+      id: 'alt_ilomangga',
+      label: 'Alternatif 1 — Lewat Desa Ilomangga',
+      deskripsi: 'Dari Batudaa/Tabongo → lewat pertigaan Desa Ilomangga → terus sampai Tunggulo → menuju Kampung Jawa',
+      asal: { id: 'batudaa', nama: 'Batudaa', lat: 0.5960, lng: 122.9100 },
+      tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
+    },
+    {
+      id: 'alt_limehe',
+      label: 'Alternatif 2 — Lewat Desa Limehe Barat',
+      deskripsi: 'Dari Batudaa/Tabongo → lewat pertigaan Desa Limehe Barat → terus sampai Pasar Hutabohu → menuju Kampung Jawa',
+      asal: { id: 'batudaa', nama: 'Batudaa', lat: 0.5960, lng: 122.9100 },
+      tujuan: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
+    },
   ],
   isimu_saja: [
-    'Langsung ke Tugu Tani Isimu: Dari lokasi Anda → lurus menuju Tugu Tani Isimu → Kampung Jawa',
+    {
+      id: 'alt_isimu',
+      label: 'Langsung ke Tugu Tani Isimu',
+      deskripsi: 'Dari lokasi Anda → lurus menuju Tugu Tani Isimu → Kampung Jawa (pusat perayaan Lebaran Ketupat)',
+      asal: { id: 'isimu', nama: 'Tugu Tani Isimu', lat: 0.6422, lng: 122.8456 },
+      tujuan: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
+    },
   ],
+  // ✅ FIX: koordinat asal Trans Sulawesi sekarang pakai titik representatif Kwandang (Gorut)
   trans_sulawesi: [
-    'Lewat Jl. Trans Sulawesi: Dari arah timur/barat → lurus Jl. Trans Sulawesi → Tugu Tani Isimu sebagai pintu masuk Kampung Jawa',
+    {
+      id: 'alt_trans',
+      label: 'Lewat Jl. Trans Sulawesi → Tugu Tani Isimu',
+      deskripsi: 'Dari arah timur/barat → lurus Jl. Trans Sulawesi → langsung menuju Tugu Tani Isimu sebagai pintu masuk Kampung Jawa',
+      asal: { id: 'trans', nama: 'Kwandang, Gorontalo Utara', lat: 0.8567, lng: 122.9071 },
+      tujuan: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
+    },
   ],
 }
 
-const PANDUAN_BALIK = [
-  'Alternatif 1 — via Jl. GORR: Tugu Tani Isimu → Tugu Ketupat Yosonegoro → Jl. Amal Modjo (Daenaa) → Jl. GORR → Kota Gorontalo',
-  'Alternatif 2 — via Jl. Pulubuhu: Tugu Ketupat → Jl. Pulubuhu → Limboto → Kota Gorontalo',
-  'Alternatif 3 — via Jl. Reformasi (16.00 WITA): Lokasi Ketupat → Jl. Trans Sulawesi → Jl. Reformasi → Jl. A.A. Wahab → Kota Gorontalo',
-  'Alternatif 4 — via Batudaa: Tugu Tani Isimu → Simpang 3 Pasar Bongomeme → Jl. Batudaa → Kota Gorontalo',
+const RUTE_BALIK = [
+  {
+    id: 'balik_1',
+    label: 'Alternatif 1 — via Jl. GORR',
+    deskripsi: 'Dari Tugu Tani Isimu → Jl. Trans Sulawesi → Tugu Ketupat Yosonegoro → belok kiri Jl. Amal Modjo (Daenaa) → belok kanan Jl. GORR → Kota Gorontalo',
+    asal: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
+    tujuan: { id: 'kota_gto', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
+  },
+  {
+    id: 'balik_2',
+    label: 'Alternatif 2 — via Jl. Pulubuhu',
+    deskripsi: 'Dari Tugu Ketupat → lurus Jl. Pulubuhu → lurus ke Limboto → Kota Gorontalo',
+    asal: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
+    tujuan: { id: 'kota_gto', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
+  },
+  {
+    id: 'balik_3',
+    label: 'Alternatif 3 — via Jl. Reformasi (16.00 WITA)',
+    deskripsi: 'Dari Lokasi Ketupat → Jl. Trans Sulawesi (Yosonegoro–Hutabohu–Tenilo–Bolihuangga) → Jl. Reformasi → belok kanan Jl. A.A. Wahab → Kota Gorontalo. Berlaku mulai pukul 16.00 WITA.',
+    asal: { id: 'tugu_ketupat', nama: 'Tugu Ketupat Yosonegoro', lat: 0.6381, lng: 122.9266 },
+    tujuan: { id: 'kota_gto', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
+  },
+  {
+    id: 'balik_4',
+    label: 'Alternatif 4 — via Batudaa',
+    deskripsi: 'Dari Tugu Tani Isimu → arah Bongomeme → belok kiri Simpang 3 Pasar Bongomeme → Jl. Batudaa → Kota Gorontalo',
+    asal: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
+    tujuan: { id: 'kota_gto', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
+  },
+]
+
+const RUTE_BALIK_TRANS = [
+  {
+    id: 'balik_trans',
+    label: 'Lewat Jl. Trans Sulawesi',
+    deskripsi: 'Dari Tugu Tani Isimu → Jl. Trans Sulawesi langsung menuju tujuan arah timur/barat',
+    asal: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
+    tujuan: { id: 'trans', nama: 'Kwandang, Gorontalo Utara', lat: 0.8567, lng: 122.9071 },
+  },
 ]
 
 const RUTE_PRIORITAS = {
+  id: 'prioritas',
   label: '🚑 Jalur Prioritas — Ambulance & Bandara',
   deskripsi: 'Jalur prioritas ambulance & masyarakat menuju Bandara Djalaludin → diarahkan lewat Jl. GORR (Gorontalo Outer Ring Road)',
-  koordinat: { lat: 0.5480, lng: 123.0580 },
-  tujuan: { lat: 0.6373, lng: 122.8481, nama: 'Bandara Djalaludin' },
+  asal: { id: 'kota_gto', nama: 'Kota Gorontalo', lat: 0.5480, lng: 123.0580 },
+  tujuan: { id: 'bandara', nama: 'Bandara Djalaludin', lat: 0.6373, lng: 122.8481 },
 }
 
-// ── HELPER ────────────────────────────────────────────────────────────────────
+// ── PARSER ────────────────────────────────────────────────────────────────────
 
-function isWilayahTrans(q) { return KAB_TRANS_SULAWESI.some(w => q.includes(w)) }
+function isWilayahTrans(q) {
+  return KAB_TRANS_SULAWESI.some(w => q.includes(w))
+}
 
-function detectAsalType(q) {
+function detectAsal(q) {
   if (isWilayahTrans(q)) return 'trans'
   if (KEC_GORONTALO_ISIMU.some(w => q.includes(w))) return 'isimu'
   if (KEC_GORONTALO_BATUDAA.some(w => q.includes(w))) return 'batudaa'
@@ -162,32 +241,60 @@ function detectAsalType(q) {
   return null
 }
 
-function getPanduan(asalType) {
-  switch (asalType) {
-    case 'trans': return PANDUAN_MENUJU.trans_sulawesi
-    case 'isimu': return PANDUAN_MENUJU.isimu_saja
-    case 'batudaa': return PANDUAN_MENUJU.batudaa_tabongo
-    case 'reformasi': return PANDUAN_MENUJU.reformasi_saja
-    case '3alt': return PANDUAN_MENUJU.tiga_alternatif
-    default: return []
+function parseInput(raw) {
+  const q = raw.toLowerCase().trim()
+
+  if (q.includes('ambulance') || q.includes('bandara') || q.includes('prioritas')) {
+    return { mode: 'prioritas' }
   }
+
+  const pemisah = [' ke ', ' menuju ', ' ke kampung', ' balik ke ', ' pulang ke ', ' kembali ke ']
+  let asal = q
+  let tujuan = ''
+  for (const p of pemisah) {
+    if (q.includes(p)) {
+      const idx = q.indexOf(p)
+      asal = q.slice(0, idx).trim()
+      tujuan = q.slice(idx + p.length).trim()
+      break
+    }
+  }
+
+  const isBalik = KATA_BALIK.some(k => q.includes(k)) ||
+    (tujuan && !KATA_KAMPUNG_JAWA.some(k => tujuan.includes(k)) && !KATA_KAMPUNG_JAWA.some(k => asal.includes(k)))
+
+  const isMenuju = KATA_KAMPUNG_JAWA.some(k => q.includes(k)) && !isBalik
+
+  if (isBalik && !isMenuju) {
+    const tujuanTrans = isWilayahTrans(tujuan || q)
+    return { mode: 'balik', tujuanLabel: tujuan || asal, tujuanTrans }
+  }
+
+  const asalType = detectAsal(asal || q)
+  if (!asalType) return { mode: 'tanya', input: raw }
+
+  return { mode: 'menuju', asalType, asalLabel: asal || raw }
 }
 
-function bukaGoogleMaps(asalKoord, tujuanNama) {
-  const origin = `${asalKoord.lat},${asalKoord.lng}`
-  const destination = encodeURIComponent(tujuanNama + ', Gorontalo')
-  window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`, '_blank')
+function getRuteMenuju(asalType) {
+  switch (asalType) {
+    case 'trans': return RUTE_MENUJU.trans_sulawesi
+    case 'isimu': return RUTE_MENUJU.isimu_saja
+    case 'batudaa': return RUTE_MENUJU.batudaa_tabongo
+    case 'reformasi': return RUTE_MENUJU.reformasi_saja
+    case '3alt': return RUTE_MENUJU.tiga_alternatif
+    default: return null
+  }
 }
 
 // ── STEP ──────────────────────────────────────────────────────────────────────
 
-const STEP = { AWAL: 'awal', TANYA_TUJUAN: 'tanya_tujuan', SELESAI: 'selesai' }
+const STEP = { AWAL: 'awal', INPUT: 'input', ALTERNATIF: 'alternatif', RUTE: 'rute' }
 
 export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
   const [step, setStep] = useState(STEP.AWAL)
   const [inputVal, setInputVal] = useState('')
-  const [asalType, setAsalType] = useState(null)
-  const [asalLabel, setAsalLabel] = useState('')
+  const [rutePilihan, setRutePilihan] = useState([])
   const [loadingRute, setLoadingRute] = useState(false)
   const [messages, setMessages] = useState([
     { role: 'assistant', text: 'Hari ini mau kemana? 🗺️' }
@@ -198,96 +305,112 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [messages])
 
-  const addMsg = (role, text) =>
-    setMessages(prev => [...prev, { role, text }])
+  const addMsg = (role, text, mapUrl = null) =>
+    setMessages(prev => [...prev, { role, text, mapUrl }])
 
   const reset = () => {
     setStep(STEP.AWAL)
     setInputVal('')
-    setAsalType(null)
-    setAsalLabel('')
+    setRutePilihan([])
     setMessages([{ role: 'assistant', text: 'Hari ini mau kemana? 🗺️' }])
-  }
-
-  // Step 1: user ketik asal
-  const handleSubmitAsal = () => {
-    const val = inputVal.trim()
-    if (!val) return
-    addMsg('user', val)
-    setInputVal('')
-
-    const q = val.toLowerCase()
-
-    // Prioritas
-    if (q.includes('ambulance') || q.includes('bandara') || q.includes('prioritas')) {
-      addMsg('assistant', `🚑 *${RUTE_PRIORITAS.label}*\n\n📋 ${RUTE_PRIORITAS.deskripsi}`)
-      setStep(STEP.SELESAI)
-      sessionStorage.setItem('peta_rute', JSON.stringify({
-        asal: { lat: RUTE_PRIORITAS.koordinat.lat, lng: RUTE_PRIORITAS.koordinat.lng },
-        tujuan: { lat: RUTE_PRIORITAS.tujuan.lat, lng: RUTE_PRIORITAS.tujuan.lng },
-      }))
-      return
-    }
-
-    // Arus balik
-    const isBalik = ['balik','pulang','kembali'].some(k => q.includes(k))
-    if (isBalik) {
-      addMsg('assistant', `📍 Berikut panduan arus balik:\n\n${PANDUAN_BALIK.map((r,i) => `${r}`).join('\n\n')}\n\nMau tujuan mana? Ketik nama tempat tujuan kamu.`)
-      setAsalType('balik')
-      setStep(STEP.TANYA_TUJUAN)
-      return
-    }
-
-    // Deteksi asal
-    const type = detectAsalType(q)
-    if (!type) {
-      addMsg('assistant', `"${val}" ada di kabupaten/kota mana?\n\nContoh: Kota Gorontalo, Bone Bolango, Kab. Gorontalo, Gorontalo Utara, Boalemo, atau Pohuwato.`)
-      return
-    }
-
-    const panduan = getPanduan(type)
-    const koordinat = KOORDINAT_ASAL[type]
-
-    setAsalType(type)
-    setAsalLabel(val)
-
-    addMsg('assistant',
-      `📍 Dari *${val}*\n\n` +
-      `${panduan.join('\n\n')}\n\n` +
-      `Mau ke mana tujuan kamu? Ketik nama tempat tujuan.`
-    )
-    setStep(STEP.TANYA_TUJUAN)
-  }
-
-  // Step 2: user ketik tujuan → buka Google Maps
-  const handleSubmitTujuan = () => {
-    const val = inputVal.trim()
-    if (!val) return
-    addMsg('user', val)
-    setInputVal('')
-
-    if (asalType === 'balik') {
-      // Asal = Tugu Tani Isimu
-      const asalKoord = { lat: 0.6422, lng: 122.8456 }
-      addMsg('assistant', `🗺️ Membuka Google Maps dari Tugu Tani Isimu ke *${val}*...`)
-      setTimeout(() => bukaGoogleMaps(asalKoord, val), 300)
-    } else {
-      const asalKoord = KOORDINAT_ASAL[asalType]
-      addMsg('assistant', `🗺️ Membuka Google Maps dari *${asalKoord.nama}* ke *${val}*...`)
-      setTimeout(() => bukaGoogleMaps(asalKoord, val), 300)
-    }
-
-    setStep(STEP.SELESAI)
   }
 
   const handlePilihPrioritas = () => {
     addMsg('user', '🚑 Jalur Prioritas')
     addMsg('assistant', `🚑 *${RUTE_PRIORITAS.label}*\n\n📋 ${RUTE_PRIORITAS.deskripsi}`)
-    setStep(STEP.SELESAI)
-    sessionStorage.setItem('peta_rute', JSON.stringify({
-      asal: { lat: RUTE_PRIORITAS.koordinat.lat, lng: RUTE_PRIORITAS.koordinat.lng },
-      tujuan: { lat: RUTE_PRIORITAS.tujuan.lat, lng: RUTE_PRIORITAS.tujuan.lng },
-    }))
+    setStep(STEP.RUTE)
+    sessionStorage.setItem('peta_rute', JSON.stringify({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan }))
+    if (onRouteFound) onRouteFound({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan })
+  }
+
+  const handleSubmitInput = () => {
+    const val = inputVal.trim()
+    if (!val) return
+    addMsg('user', val)
+    setInputVal('')
+
+    const parsed = parseInput(val)
+
+    if (parsed.mode === 'prioritas') {
+      handlePilihPrioritas()
+      return
+    }
+
+    if (parsed.mode === 'tanya') {
+      addMsg('assistant', `"${parsed.input}" ada di kabupaten/kota mana?\n\nContoh: Kota Gorontalo, Bone Bolango, Kab. Gorontalo, Gorontalo Utara, Boalemo, atau Pohuwato.`)
+      setStep(STEP.INPUT)
+      return
+    }
+
+    if (parsed.mode === 'balik') {
+      const rute = parsed.tujuanTrans ? RUTE_BALIK_TRANS : RUTE_BALIK
+      addMsg('assistant', parsed.tujuanTrans
+        ? `📍 Tujuan *${parsed.tujuanLabel}* lewat jalur Trans Sulawesi:`
+        : `📍 Berikut alternatif arus balik menuju *${parsed.tujuanLabel}*:`)
+      setRutePilihan(rute)
+      setStep(STEP.ALTERNATIF)
+      return
+    }
+
+    if (parsed.mode === 'menuju') {
+      const rute = getRuteMenuju(parsed.asalType)
+      if (!rute) {
+        addMsg('assistant', `Maaf, belum ada panduan rute dari "${parsed.asalLabel}".\n\nCoba sebutkan nama kecamatan atau kabupaten/kota kamu.`)
+        setStep(STEP.INPUT)
+        return
+      }
+      addMsg('assistant', rute.length === 1
+        ? `📍 Rute dari *${parsed.asalLabel}* menuju Kampung Jawa:`
+        : `📍 Ada ${rute.length} alternatif dari *${parsed.asalLabel}*. Pilih salah satu:`)
+      setRutePilihan(rute)
+      setStep(STEP.ALTERNATIF)
+    }
+  }
+
+  const handlePilihRute = async (rute) => {
+    setStep(STEP.RUTE)
+    addMsg('user', rute.label)
+    addMsg('assistant', '⏳ Memuat rute...')
+    setLoadingRute(true)
+
+    if (onZoomLocation) onZoomLocation(rute.tujuan)
+    if (onRouteFound) onRouteFound({ asal: rute.asal, tujuan: rute.tujuan })
+    sessionStorage.setItem('peta_rute', JSON.stringify({ asal: rute.asal, tujuan: rute.tujuan }))
+
+    const mapUrl = API_KEY
+      ? `https://www.google.com/maps/embed/v1/directions?key=${API_KEY}&origin=${rute.asal.lat},${rute.asal.lng}&destination=${rute.tujuan.lat},${rute.tujuan.lng}&mode=driving&language=id`
+      : null
+
+    try {
+      const res = await fetch('/api/rute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ asal: rute.asal, tujuan: rute.tujuan }),
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setMessages(prev => {
+        const updated = [...prev]
+        updated[updated.length - 1] = {
+          role: 'assistant',
+          text: `🛣️ *${rute.label}*\n\n📋 ${rute.deskripsi}\n\n⏱️ Estimasi: ${data.durasi} | 📏 Jarak: ${data.jarak}`,
+          mapUrl,
+        }
+        return updated
+      })
+    } catch {
+      setMessages(prev => {
+        const updated = [...prev]
+        updated[updated.length - 1] = {
+          role: 'assistant',
+          text: `🛣️ *${rute.label}*\n\n📋 ${rute.deskripsi}`,
+          mapUrl,
+        }
+        return updated
+      })
+    } finally {
+      setLoadingRute(false)
+    }
   }
 
   return (
@@ -318,6 +441,20 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
                   : 'bg-asphalt-700 border border-asphalt-600 text-gray-300 rounded-bl-sm'
               }`}>
                 {msg.text}
+                {msg.mapUrl && (
+                  <div className="mt-3 rounded-xl overflow-hidden border border-asphalt-500">
+                    <iframe
+                      src={msg.mapUrl}
+                      width="100%"
+                      height="220"
+                      style={{ border: 0, display: 'block' }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Rute Maps"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -335,8 +472,8 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input Asal */}
-        {step === STEP.AWAL && (
+        {/* Input — tampil di AWAL dan INPUT */}
+        {(step === STEP.AWAL || step === STEP.INPUT) && (
           <div className="px-4 pb-4">
             <p className="text-xs text-gray-600 font-mono mb-2">🧭 Masukan Tujuan Awal:</p>
             <div className="flex gap-2 mb-2">
@@ -344,12 +481,12 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
                 type="text"
                 value={inputVal}
                 onChange={e => setInputVal(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubmitAsal()}
-                placeholder="Contoh: Atinggola, Dembe, Kabila..."
+                onKeyDown={e => e.key === 'Enter' && handleSubmitInput()}
+                placeholder="Contoh: Dari Dembe ke Kampung Jawa"
                 className="flex-1 text-xs bg-asphalt-700 border border-asphalt-600 text-gray-200 rounded-xl px-3 py-2.5 font-mono placeholder-gray-600 focus:outline-none focus:border-asphalt-400"
                 autoFocus
               />
-              <button onClick={handleSubmitAsal}
+              <button onClick={handleSubmitInput}
                 className="text-xs bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl px-3 py-2.5 font-mono transition-all">
                 →
               </button>
@@ -361,35 +498,34 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
           </div>
         )}
 
-        {/* Input Tujuan */}
-        {step === STEP.TANYA_TUJUAN && (
+        {/* Pilih Alternatif */}
+        {step === STEP.ALTERNATIF && (
           <div className="px-4 pb-4">
-            <p className="text-xs text-gray-600 font-mono mb-2">📍 Ketik tujuan kamu:</p>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={inputVal}
-                onChange={e => setInputVal(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubmitTujuan()}
-                placeholder="Contoh: Kampung Jawa, Limboto, Marisa..."
-                className="flex-1 text-xs bg-asphalt-700 border border-asphalt-600 text-gray-200 rounded-xl px-3 py-2.5 font-mono placeholder-gray-600 focus:outline-none focus:border-asphalt-400"
-                autoFocus
-              />
-              <button onClick={handleSubmitTujuan}
-                className="text-xs bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl px-3 py-2.5 font-mono transition-all">
-                →
-              </button>
+            <p className="text-xs text-gray-600 font-mono mb-2">🛣️ Pilih rute:</p>
+            <div className="flex flex-wrap gap-2">
+              {rutePilihan.map(rute => (
+                <button key={rute.id} onClick={() => handlePilihRute(rute)}
+                  className="text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 hover:border-asphalt-500 text-gray-300 hover:text-gray-100 rounded-full px-3 py-1.5 transition-all font-mono whitespace-nowrap">
+                  {rute.label}
+                </button>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Selesai */}
-        {step === STEP.SELESAI && (
+        {/* Setelah rute */}
+        {step === STEP.RUTE && !loadingRute && (
           <div className="px-4 pb-4 pt-2">
-            <button onClick={reset}
-              className="w-full text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
-              🔄 Cari Rute Lain
-            </button>
+            <div className="flex gap-2">
+              <button onClick={reset}
+                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
+                🔄 Pilih Rute Lain
+              </button>
+              <button onClick={() => { window.location.href = '/peta' }}
+                className="flex-1 text-xs bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 text-gray-300 rounded-xl py-2.5 transition-all font-mono">
+                🗺️ Peta Penuh
+              </button>
+            </div>
           </div>
         )}
 

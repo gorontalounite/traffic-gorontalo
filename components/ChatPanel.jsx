@@ -10,7 +10,7 @@ const KEL_KOTA_GORONTALO = [
   'donggala','pohe','siendeng','tanjung kramat','tenda',
   'buladu','buliide','dembe i','lekobalo','molosifat','pilolodaa','tenilo',
   'biawao','biawu','limba b','limba u i','limba u ii',
-  'dulalowo','dulalowo timur','liluwo','paguyaman','pulubala','wumialo',
+  'dulalowo','dulalowo timur','liluwo','paguyaman','wumialo',
   'heledulaa selatan','heledulaa utara','ipilo','moodu','padebuolo','tamalate',
   'dembe ii','dembe jaya','dulomo selatan','dulomo utara','wangkaditi barat','wangkaditi timur',
   'bulotadaa','bulotadaa timur','molosipat u','tanggikiki','tapa',
@@ -21,7 +21,7 @@ const KEC_KOTA_GORONTALO = [
 ]
 
 const KEL_BONE_BOLANGO = [
-  'bilonlantunga','cendana putih','ilohuuwa','inogaluma','masiaga','molamahu','monano','moodulio','muara bone','permata','sogitia','taludaa','tumbuh mekar','waluhu',
+  'bilonlantunga','cendana putih','ilohuuwa','inogaluma','masiaga','molamahu','monano','moodulio','muara bone','sogitia','taludaa','tumbuh mekar','waluhu',
   'alo','bunga','inomata','laut biru','moopiya','mootawa','mootayu','mootinelo','pelita jaya','tombulilato',
   'batu hijau','bilungala','bilungala utara','kemiri','lembah hijau','ombulo hijau','pelita hijau','tihu','tolotio','tongo','tunas jaya','uabanga',
   'buata','luwohu','panggulo','panggulo barat','sukma','tanah putih','timbuolo','timbuolo tengah','timbuolo timur',
@@ -53,12 +53,19 @@ const KEC_GORONTALO_BATUDAA = ['batudaa','batudaa pantai','tabongo']
 const KEC_GORONTALO_ISIMU = ['bongomeme','dungaliyo','pulubala','tibawa','asparaga','bilato','boliyohuto','mootilango','tolangohula']
 
 const KAB_TRANS_SULAWESI = [
-  'gorontalo utara','gorut',
-  'boalemo','pohuwato',
+  'gorontalo utara','gorut','boalemo','pohuwato',
+  // kec gorut
   'anggrek','atinggola','biau','kwandang','monano','molabuoh','nuangan','sumalata','sumalata timur','tomilito','tolinggula','gentuma raya','ponelo kepulauan',
+  // kec boalemo
   'botumoito','dulupi','mananggu','paguyaman pantai','tilamuta','wonosari',
+  // kec pohuwato
   'buntulia','dengilo','duhiadaa','lemito','marisa','paguat','patilanggio','popayato','popayato barat','popayato timur','randangan','taluditi','wanggarasi',
 ]
+
+// Kata kunci tujuan = Kampung Jawa
+const KATA_KAMPUNG_JAWA = ['kampung jawa','ketupat','yosonegoro','isimu','tugu tani','lokasi ketupat','lebaran ketupat']
+// Kata kunci arus balik
+const KATA_BALIK = ['balik','pulang','kembali','balik ke','pulang ke','kembali ke']
 
 // ── RUTE ─────────────────────────────────────────────────────────────────────
 
@@ -162,6 +169,16 @@ const RUTE_BALIK = [
   },
 ]
 
+const RUTE_BALIK_TRANS = [
+  {
+    id: 'balik_trans',
+    label: 'Lewat Jl. Trans Sulawesi',
+    deskripsi: 'Dari Tugu Tani Isimu → Jl. Trans Sulawesi langsung menuju tujuan arah timur/barat',
+    asal: { id: 'patung_tani', nama: 'Patung Tani Isimu', lat: 0.6422, lng: 122.8456 },
+    tujuan: { id: 'trans', nama: 'Jl. Trans Sulawesi', lat: 0.6422, lng: 122.8456 },
+  },
+]
+
 const RUTE_PRIORITAS = {
   id: 'prioritas',
   label: '🚑 Jalur Prioritas — Ambulance & Bandara',
@@ -170,28 +187,85 @@ const RUTE_PRIORITAS = {
   tujuan: { id: 'bandara', nama: 'Bandara Djalaludin', lat: 0.6373, lng: 122.8481 },
 }
 
-// ── HELPER DETEKSI RUTE ───────────────────────────────────────────────────────
+// ── PARSER ────────────────────────────────────────────────────────────────────
 
-function detectRuteMenuju(input) {
-  const q = input.toLowerCase().trim()
-  if (KAB_TRANS_SULAWESI.some(w => q.includes(w))) return RUTE_MENUJU.trans_sulawesi
-  if (KEC_GORONTALO_ISIMU.some(w => q.includes(w))) return RUTE_MENUJU.isimu_saja
-  if (KEC_GORONTALO_BATUDAA.some(w => q.includes(w))) return RUTE_MENUJU.batudaa_tabongo
-  if (KEC_GORONTALO_REFORMASI.some(w => q.includes(w))) return RUTE_MENUJU.reformasi_saja
-  if (KEC_GORONTALO_3ALT.some(w => q.includes(w))) return RUTE_MENUJU.tiga_alternatif
-  if (q.includes('bone bolango') || KEC_BONE_BOLANGO.some(w => q.includes(w)) || KEL_BONE_BOLANGO.some(w => q.includes(w))) return RUTE_MENUJU.tiga_alternatif
-  if (q.includes('kota gorontalo') || KEC_KOTA_GORONTALO.some(w => q.includes(w)) || KEL_KOTA_GORONTALO.some(w => q.includes(w))) return RUTE_MENUJU.tiga_alternatif
+function isWilayahTrans(q) {
+  return KAB_TRANS_SULAWESI.some(w => q.includes(w))
+}
+
+function detectAsal(q) {
+  if (isWilayahTrans(q)) return 'trans'
+  if (KEC_GORONTALO_ISIMU.some(w => q.includes(w))) return 'isimu'
+  if (KEC_GORONTALO_BATUDAA.some(w => q.includes(w))) return 'batudaa'
+  if (KEC_GORONTALO_REFORMASI.some(w => q.includes(w))) return 'reformasi'
+  if (KEC_GORONTALO_3ALT.some(w => q.includes(w))) return '3alt'
+  if (q.includes('bone bolango') || KEC_BONE_BOLANGO.some(w => q.includes(w)) || KEL_BONE_BOLANGO.some(w => q.includes(w))) return '3alt'
+  if (q.includes('kota gorontalo') || KEC_KOTA_GORONTALO.some(w => q.includes(w)) || KEL_KOTA_GORONTALO.some(w => q.includes(w))) return '3alt'
   return null
+}
+
+function parseInput(raw) {
+  const q = raw.toLowerCase().trim()
+
+  // Cek prioritas
+  if (q.includes('ambulance') || q.includes('bandara') || q.includes('prioritas')) {
+    return { mode: 'prioritas' }
+  }
+
+  // Pisah input dengan kata pemisah
+  const pemisah = [' ke ', ' menuju ', ' ke kampung', ' balik ke ', ' pulang ke ', ' kembali ke ']
+  let bagian = [q]
+  for (const p of pemisah) {
+    if (q.includes(p)) {
+      const idx = q.indexOf(p)
+      bagian = [q.slice(0, idx).trim(), q.slice(idx + p.length).trim()]
+      break
+    }
+  }
+
+  const asal = bagian[0] || ''
+  const tujuan = bagian[1] || ''
+
+  // Deteksi arus balik: tujuan bukan kampung jawa, atau ada kata balik
+  const isBalik = KATA_BALIK.some(k => q.includes(k)) ||
+    (tujuan && !KATA_KAMPUNG_JAWA.some(k => tujuan.includes(k)) && !KATA_KAMPUNG_JAWA.some(k => asal.includes(k)))
+
+  const isMenuju = KATA_KAMPUNG_JAWA.some(k => q.includes(k)) && !isBalik
+
+  // Arus balik
+  if (isBalik && !isMenuju) {
+    const tujuanTrans = isWilayahTrans(tujuan || q)
+    return { mode: 'balik', tujuanLabel: tujuan || asal, tujuanTrans }
+  }
+
+  // Menuju kampung jawa — deteksi dari asal
+  const asalType = detectAsal(asal || q)
+  if (!asalType) {
+    // Tidak dikenal — tanya konfirmasi
+    return { mode: 'tanya', input: raw }
+  }
+
+  return { mode: 'menuju', asalType, asalLabel: asal || raw }
+}
+
+function getRuteMenuju(asalType) {
+  switch (asalType) {
+    case 'trans': return RUTE_MENUJU.trans_sulawesi
+    case 'isimu': return RUTE_MENUJU.isimu_saja
+    case 'batudaa': return RUTE_MENUJU.batudaa_tabongo
+    case 'reformasi': return RUTE_MENUJU.reformasi_saja
+    case '3alt': return RUTE_MENUJU.tiga_alternatif
+    default: return null
+  }
 }
 
 // ── STEP ──────────────────────────────────────────────────────────────────────
 
-const STEP = { ARAH: 'arah', INPUT_ASAL: 'input_asal', INPUT_TUJUAN: 'input_tujuan', ALTERNATIF: 'alternatif', RUTE: 'rute' }
+const STEP = { AWAL: 'awal', INPUT: 'input', ALTERNATIF: 'alternatif', RUTE: 'rute' }
 
 export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
-  const [step, setStep] = useState(STEP.ARAH)
-  const [inputAsal, setInputAsal] = useState('')
-  const [inputTujuan, setInputTujuan] = useState('')
+  const [step, setStep] = useState(STEP.AWAL)
+  const [inputVal, setInputVal] = useState('')
   const [rutePilihan, setRutePilihan] = useState([])
   const [loadingRute, setLoadingRute] = useState(false)
   const [messages, setMessages] = useState([
@@ -207,68 +281,69 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
     setMessages(prev => [...prev, { role, text, mapUrl }])
 
   const reset = () => {
-    setStep(STEP.ARAH)
-    setInputAsal('')
-    setInputTujuan('')
+    setStep(STEP.AWAL)
+    setInputVal('')
     setRutePilihan([])
     setMessages([{ role: 'assistant', text: 'Hari ini mau kemana? 🗺️' }])
   }
 
   const handlePilihArah = (mode) => {
-    if (mode === 'menuju') {
-      setStep(STEP.INPUT_ASAL)
-      addMsg('user', '🔴 Menuju Kampung Jawa')
-      addMsg('assistant', 'Dari mana kamu berangkat?\nKetik nama kelurahan, kecamatan, atau kabupaten/kota.')
-    } else if (mode === 'balik') {
-      setStep(STEP.INPUT_TUJUAN)
-      addMsg('user', '🔵 Arus Balik')
-      addMsg('assistant', 'Mau kembali ke mana?\nKetik nama tujuan kamu.')
-    } else if (mode === 'prioritas') {
+    setStep(STEP.INPUT)
+    if (mode === 'prioritas') {
       addMsg('user', '🚑 Jalur Prioritas')
       addMsg('assistant', `🚑 *${RUTE_PRIORITAS.label}*\n\n📋 ${RUTE_PRIORITAS.deskripsi}`)
       setStep(STEP.RUTE)
       sessionStorage.setItem('peta_rute', JSON.stringify({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan }))
       if (onRouteFound) onRouteFound({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan })
+    } else {
+      addMsg('assistant', 'Ketik perjalananmu.\nContoh: "Dari Dembe ke Kampung Jawa" atau "Balik ke Tomilito"')
     }
   }
 
-  const handleSubmitAsal = () => {
-    const val = inputAsal.trim()
+  const handleSubmitInput = () => {
+    const val = inputVal.trim()
     if (!val) return
-    const rute = detectRuteMenuju(val)
     addMsg('user', val)
-    setInputAsal('')
-    if (!rute) {
-    addMsg('assistant', `"${val}" ada di kabupaten/kota mana?\n\nContoh: Kota Gorontalo, Kab. Bone Bolango, Kab. Gorontalo, Gorontalo Utara, Boalemo, atau Pohuwato.`)
-    return
+    setInputVal('')
+
+    const parsed = parseInput(val)
+
+    if (parsed.mode === 'prioritas') {
+      addMsg('assistant', `🚑 *${RUTE_PRIORITAS.label}*\n\n📋 ${RUTE_PRIORITAS.deskripsi}`)
+      setStep(STEP.RUTE)
+      sessionStorage.setItem('peta_rute', JSON.stringify({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan }))
+      if (onRouteFound) onRouteFound({ asal: RUTE_PRIORITAS.asal, tujuan: RUTE_PRIORITAS.tujuan })
+      return
     }
-    setRutePilihan(rute)
-    setStep(STEP.ALTERNATIF)
-    addMsg('assistant', rute.length === 1
-      ? `📍 Berikut rute yang direkomendasikan dari *${val}*:`
-      : `📍 Ada ${rute.length} alternatif rute dari *${val}*. Pilih salah satu:`)
+
+    if (parsed.mode === 'tanya') {
+      addMsg('assistant', `"${parsed.input}" ada di kabupaten/kota mana?\n\nContoh: Kota Gorontalo, Bone Bolango, Kab. Gorontalo, Gorontalo Utara, Boalemo, atau Pohuwato.`)
+      return
+    }
+
+    if (parsed.mode === 'balik') {
+      const rute = parsed.tujuanTrans ? RUTE_BALIK_TRANS : RUTE_BALIK
+      addMsg('assistant', parsed.tujuanTrans
+        ? `📍 Tujuan *${parsed.tujuanLabel}* lewat jalur Trans Sulawesi:`
+        : `📍 Berikut alternatif arus balik menuju *${parsed.tujuanLabel}*:`)
+      setRutePilihan(rute)
+      setStep(STEP.ALTERNATIF)
+      return
+    }
+
+    if (parsed.mode === 'menuju') {
+      const rute = getRuteMenuju(parsed.asalType)
+      if (!rute) {
+        addMsg('assistant', `Maaf, belum ada panduan rute dari "${parsed.asalLabel}".\n\nCoba sebutkan nama kecamatan atau kabupaten/kota kamu.`)
+        return
+      }
+      addMsg('assistant', rute.length === 1
+        ? `📍 Rute dari *${parsed.asalLabel}* menuju Kampung Jawa:`
+        : `📍 Ada ${rute.length} alternatif dari *${parsed.asalLabel}*. Pilih salah satu:`)
+      setRutePilihan(rute)
+      setStep(STEP.ALTERNATIF)
+    }
   }
-
-  const handleSubmitTujuan = () => {
-  const val = inputTujuan.trim()
-  if (!val) return
-  addMsg('user', val)
-  setInputTujuan('')
-
-  // Cek apakah tujuan terdeteksi sebagai wilayah Trans Sulawesi
-  const q = val.toLowerCase()
-  if (KAB_TRANS_SULAWESI.some(w => q.includes(w))) {
-    addMsg('assistant', `📍 Tujuan *${val}* berada di jalur Trans Sulawesi.\n\nDisarankan keluar via Tugu Tani Isimu → Jl. Trans Sulawesi langsung ke arah tujuan.`)
-    setRutePilihan([RUTE_MENUJU.trans_sulawesi[0]])
-    setStep(STEP.ALTERNATIF)
-    return
-  }
-
-  // Default: tampilkan semua 4 alternatif
-  addMsg('assistant', `📍 Berikut 4 alternatif arus balik menuju *${val}*:`)
-  setRutePilihan(RUTE_BALIK)
-  setStep(STEP.ALTERNATIF)
-}
 
   const handlePilihRute = async (rute) => {
     setStep(STEP.RUTE)
@@ -327,7 +402,7 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
             <span className="w-2 h-2 rounded-full bg-signal-yellow" />
             <span className="w-2 h-2 rounded-full bg-signal-green" />
           </div>
-          {step !== STEP.ARAH && (
+          {step !== STEP.AWAL && (
             <button onClick={reset} className="text-xs text-gray-500 hover:text-gray-300 font-mono border border-asphalt-600 rounded-full px-2.5 py-1 transition-colors">
               ↩️ Ulang
             </button>
@@ -375,60 +450,46 @@ export default function ChatPanel({ reports, onZoomLocation, onRouteFound }) {
           <div ref={bottomRef} />
         </div>
 
-        {/* Step: Pilih Arah */}
-        {step === STEP.ARAH && (
+        {/* Step: Awal — hanya jalur prioritas + input */}
+        {step === STEP.AWAL && (
           <div className="px-4 pb-4">
-            <p className="text-xs text-gray-600 font-mono mb-2">🧭 Masukan kecamatan</p>
-            <div className="flex flex-col gap-2">
-              {[
-                { mode: 'menuju', label: '🔴 Menuju Kampung Jawa' },
-                { mode: 'balik', label: '🔵 Arus Balik' },
-                { mode: 'prioritas', label: '🚑 Jalur Prioritas (Ambulance & Bandara)' },
-              ].map(({ mode, label }) => (
-                <button key={mode} onClick={() => handlePilihArah(mode)}
-                  className="text-left text-sm bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 hover:border-asphalt-500 text-gray-200 rounded-xl px-4 py-3 transition-all font-display font-600">
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Step: Input Asal */}
-        {step === STEP.INPUT_ASAL && (
-          <div className="px-4 pb-4">
-            <div className="flex gap-2">
+            <p className="text-xs text-gray-600 font-mono mb-2">🧭 Masukan kecamatan:</p>
+            <div className="flex gap-2 mb-2">
               <input
                 type="text"
-                value={inputAsal}
-                onChange={e => setInputAsal(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubmitAsal()}
-                placeholder="Ketik kelurahan / kecamatan / kab-kota..."
+                value={inputVal}
+                onChange={e => setInputVal(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSubmitInput()}
+                placeholder="Contoh: Dari Dembe ke Kampung Jawa"
                 className="flex-1 text-xs bg-asphalt-700 border border-asphalt-600 text-gray-200 rounded-xl px-3 py-2.5 font-mono placeholder-gray-600 focus:outline-none focus:border-asphalt-400"
                 autoFocus
               />
-              <button onClick={handleSubmitAsal}
+              <button onClick={handleSubmitInput}
                 className="text-xs bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl px-3 py-2.5 font-mono transition-all">
                 →
               </button>
             </div>
+            <button onClick={() => handlePilihArah('prioritas')}
+              className="w-full text-left text-sm bg-asphalt-700 hover:bg-asphalt-600 border border-asphalt-600 hover:border-asphalt-500 text-gray-200 rounded-xl px-4 py-3 transition-all font-display font-600">
+              🚑 Jalur Prioritas (Ambulance & Bandara)
+            </button>
           </div>
         )}
 
-        {/* Step: Input Tujuan */}
-        {step === STEP.INPUT_TUJUAN && (
+        {/* Step: Input lanjutan */}
+        {step === STEP.INPUT && (
           <div className="px-4 pb-4">
             <div className="flex gap-2">
               <input
                 type="text"
-                value={inputTujuan}
-                onChange={e => setInputTujuan(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubmitTujuan()}
-                placeholder="Ketik tujuan kamu..."
+                value={inputVal}
+                onChange={e => setInputVal(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSubmitInput()}
+                placeholder="Contoh: Dari Dembe ke Kampung Jawa"
                 className="flex-1 text-xs bg-asphalt-700 border border-asphalt-600 text-gray-200 rounded-xl px-3 py-2.5 font-mono placeholder-gray-600 focus:outline-none focus:border-asphalt-400"
                 autoFocus
               />
-              <button onClick={handleSubmitTujuan}
+              <button onClick={handleSubmitInput}
                 className="text-xs bg-asphalt-600 hover:bg-asphalt-500 border border-asphalt-500 text-gray-200 rounded-xl px-3 py-2.5 font-mono transition-all">
                 →
               </button>
